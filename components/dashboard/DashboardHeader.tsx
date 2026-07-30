@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Icon } from "@/components/ui/Icon";
 
 export function DashboardHeader({
@@ -20,7 +21,9 @@ export function DashboardHeader({
           <kbd>⌘ K</kbd>
         </label>
         <button className="notification" aria-label="Notifications">♢<i /></button>
-        <button className="button button-primary button-small"><Icon name="plus" size={17} /> Create new</button>
+        <Link href="/dashboard/content/new" className="button button-primary button-small">
+          <Icon name="plus" size={17} /> Create new
+        </Link>
       </div>
     </header>
   );

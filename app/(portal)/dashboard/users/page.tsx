@@ -1,17 +1,32 @@
+import Link from "next/link";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { Icon } from "@/components/ui/Icon";
+import { UserDetailsManager } from "@/components/dashboard/UserDetailsManager";
+import { fetchUsers } from "@/lib/api/users";
 
-export default function UsersPage() {
+export default async function UsersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const query = await searchParams;
+  const parsedPage = Number(query.page ?? 0);
+  const page = Number.isInteger(parsedPage) && parsedPage >= 0 ? parsedPage : 0;
+  const result = await fetchUsers(page);
+
   return (
     <>
-      <DashboardHeader title="Team members" eyebrow="Administration" />
+      <DashboardHeader title="Users" eyebrow="Administration" />
       <div className="dashboard-content">
-        <section className="panel empty-state">
-          <span><Icon name="users" size={32} /></span>
-          <h2>Your team, in one place</h2>
-          <p>Manage access, roles, and workspace permissions as your team grows.</p>
-          <button className="button button-primary"><Icon name="plus" size={17} /> Invite member</button>
-        </section>
+        <UserDetailsManager users={result.content} totalElements={result.totalElements} />
+        <div className="listing-pagination panel user-pagination">
+          {result.first
+            ? <span>← Previous</span>
+            : <Link href={`/dashboard/users?page=${result.page - 1}`}>← Previous</Link>}
+          <span>Page {result.page + 1} of {Math.max(result.totalPages, 1)}</span>
+          {result.last
+            ? <span>Next →</span>
+            : <Link href={`/dashboard/users?page=${result.page + 1}`}>Next →</Link>}
+        </div>
       </div>
     </>
   );
