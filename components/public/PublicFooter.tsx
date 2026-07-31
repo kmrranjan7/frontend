@@ -11,8 +11,8 @@ export function PublicFooter() {
         </div>
         <div className="footer-links">
           <Link href="/jobs">Latest Jobs</Link>
-          <Link href="/news">News</Link>
-          <Link href="/faq">FAQ</Link>
+          <Link href="/results">Results</Link>
+          <Link href="/contact">Contact</Link>
           <Link href="/about">About</Link>
         </div>
       </div>

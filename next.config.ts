@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
       { source: "/:path*", headers: securityHeaders },
       {
         source: "/tinymce/:path*",
-        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+        headers: [{ key: "Cache-Control", value: "private, no-store, max-age=0" }],
       },
     ];
   },

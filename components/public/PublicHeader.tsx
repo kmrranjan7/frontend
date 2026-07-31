@@ -1,17 +1,12 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import logoImage from "@/app/logo.png";
 import { publicNavigation } from "@/config/navigation";
 import { Icon } from "@/components/ui/Icon";
 
 export function PublicHeader() {
-  const pathname = usePathname();
   const primaryNavigation = publicNavigation.slice(0, 5);
   const browseNavigation = publicNavigation.slice(5);
-  const isActive = (href: string) => href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
     <header className="public-header minimal-public-header">
@@ -29,8 +24,6 @@ export function PublicHeader() {
         <nav className="minimal-primary-nav" aria-label="Main navigation">
           {primaryNavigation.map((item) => (
             <Link
-              aria-current={isActive(item.href) ? "page" : undefined}
-              className={isActive(item.href) ? "active" : ""}
               key={item.label}
               href={item.href}
             >
@@ -51,8 +44,6 @@ export function PublicHeader() {
               <div className="browse-menu-links">
                 {browseNavigation.map((item) => (
                   <Link
-                    aria-current={isActive(item.href) ? "page" : undefined}
-                    className={isActive(item.href) ? "active" : ""}
                     key={item.label}
                     href={item.href}
                   >
