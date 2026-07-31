@@ -1,21 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { PublicInfoPage } from "@/components/public/PublicInfoPage";
 import { createMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = createMetadata({
-  title: "About Sarkari Global Result",
-  description:
-    "Learn how Sarkari Global Result helps students and job seekers find timely, accurate government recruitment and examination updates.",
-  path: "/about",
-});
-
-export default function AboutPage() {
-  return (
-    <section className="simple-page shell">
-      <span className="kicker">ABOUT US</span>
-      <h1>Clear information for<br /><em>important opportunities.</em></h1>
-      <p>Sarkari Global Result helps students and job seekers discover government recruitment, examinations, admissions, and results. We are an independent information service—not a government website.</p>
-      <Link className="button button-primary" href="/jobs">Browse latest jobs</Link>
-    </section>
-  );
-}
+export const metadata: Metadata = createMetadata({ title: "About Us", description: "Learn about Sarkari Global Result and our approach to clear government job and education updates.", path: "/about" });
+export default function Page() { return <PublicInfoPage title="About Us" description="Clear, accessible government job and education information." path="/about"><h2>Our purpose</h2><p>Sarkari Global Result organizes recruitment, examination, admit-card, result, syllabus, answer-key, and admission updates so candidates can find important information quickly.</p><h2>Editorial standard</h2><p>We aim to present dates, eligibility, vacancies, and application instructions clearly. Candidates should always verify final details in the linked official notification before applying.</p></PublicInfoPage>; }

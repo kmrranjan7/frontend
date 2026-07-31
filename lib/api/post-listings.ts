@@ -1,4 +1,5 @@
 import { env } from "@/config/env";
+import { dashboardAuthHeaders } from "@/lib/auth/session";
 
 export const postTypeConfig = {
   job: { label: "Job", apiValue: "JOB" },
@@ -16,11 +17,14 @@ export type PostTypeSlug = keyof typeof postTypeConfig;
 export type PostListingItem = Readonly<{
   id: string;
   title: string;
+  slug: string;
   startDate: string | null;
   lastDate: string | null;
   status: string;
   state: string | null;
+  vacancies: number | null;
   department: string | null;
+  qualification: string | null;
 }>;
 
 export type PostListingPage = Readonly<{
@@ -50,12 +54,14 @@ export async function fetchPostListings({
   size = 20,
   search = "",
   sortDir = "desc",
+  status,
 }: {
   postType: PostTypeSlug;
   page?: number;
   size?: number;
   search?: string;
   sortDir?: "asc" | "desc";
+  status?: "PUBLISHED" | "DRAFT";
 }): Promise<PostListingPage> {
   const query = new URLSearchParams({
     postType: postTypeConfig[postType].apiValue,
@@ -65,9 +71,13 @@ export async function fetchPostListings({
   });
 
   if (search.trim()) query.set("search", search.trim());
+  if (status) query.set("status", status);
 
   const response = await fetch(`${env.backendApiUrl}/api/v1/jobs?${query}`, {
-    cache: "no-store",
+    headers: status === "PUBLISHED" ? undefined : await dashboardAuthHeaders(),
+    ...(status === "PUBLISHED"
+      ? { next: { revalidate: 60 } }
+      : { cache: "no-store" as const }),
   });
   const payload = await response.json() as ApiResponse;
 

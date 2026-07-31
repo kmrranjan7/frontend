@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { dashboardAuthHeaders } from "@/lib/auth/session";
 
 const backendOrigin = process.env.NEXT_PUBLIC_BACKEND_API_URL?.replace(/\/$/, "");
 
@@ -13,7 +14,7 @@ export async function POST(request: Request) {
   try {
     const response = await fetch(`${backendOrigin}/api/v1/users`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...(await dashboardAuthHeaders()) },
       body: await request.text(),
       cache: "no-store",
     });

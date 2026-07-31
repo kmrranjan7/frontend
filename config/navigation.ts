@@ -1,8 +1,18 @@
 export const publicNavigation = [
+  { label: "Home", href: "/" },
   { label: "Latest Jobs", href: "/jobs" },
-  { label: "Results", href: "/jobs" },
-  { label: "Admit Cards", href: "/jobs" },
-  { label: "News & Guides", href: "/news" },
+  { label: "Results", href: "/results" },
+  { label: "Admit Cards", href: "/admit-cards" },
+  { label: "Exams", href: "/exams" },
+  { label: "Image Compressor", href: "/image-compressor" },
+  { label: "Answer Keys", href: "/answer-keys" },
+  { label: "Syllabus", href: "/syllabus" },
+  { label: "Admissions", href: "/admissions" },
+  { label: "About Us", href: "/about" },
+  { label: "Contact Us", href: "/contact" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms & Conditions", href: "/terms-and-conditions" },
+  { label: "Disclaimer", href: "/disclaimer" },
 ];
 
 export const dashboardNavigation = [

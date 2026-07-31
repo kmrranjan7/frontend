@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   adminNavigation,
   contentTypeNavigation,
@@ -12,6 +12,13 @@ import { Logo } from "@/components/ui/Logo";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function logout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.replace("/login");
+    router.refresh();
+  }
 
   return (
     <aside className="dashboard-sidebar">
@@ -30,7 +37,7 @@ export function DashboardSidebar() {
       <div className="sidebar-profile">
         <span className="sidebar-profile-avatar">KR<i aria-hidden="true" /></span>
         <span><b>Kumar Ranjan</b><small>Administrator</small></span>
-        <button type="button" aria-label="Open account menu">•••</button>
+        <button type="button" aria-label="Sign out" title="Sign out" onClick={logout}>↪</button>
       </div>
     </aside>
   );

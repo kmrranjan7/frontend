@@ -1,4 +1,5 @@
 import { env } from "@/config/env";
+import { dashboardAuthHeaders } from "@/lib/auth/session";
 
 export type UserDetails = Readonly<{
   id: string;
@@ -28,9 +29,18 @@ type UserApiResponse = Readonly<{
   data: UserPage;
 }>;
 
-export async function fetchUsers(page = 0, size = 20): Promise<UserPage> {
-  const query = new URLSearchParams({ page: String(page), size: String(size) });
+export async function fetchUsers(
+  page = 0,
+  size = 20,
+  sortDir: "asc" | "desc" = "desc",
+): Promise<UserPage> {
+  const query = new URLSearchParams({
+    page: String(page),
+    size: String(size),
+    sortDir,
+  });
   const response = await fetch(`${env.backendApiUrl}/api/v1/users?${query}`, {
+    headers: await dashboardAuthHeaders(),
     cache: "no-store",
   });
   const payload = await response.json() as UserApiResponse;

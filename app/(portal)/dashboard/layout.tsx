@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
+import { hasValidDashboardSession } from "@/lib/auth/session";
 
 export const metadata: Metadata = {
   robots: {
@@ -17,9 +19,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  if (!(await hasValidDashboardSession())) redirect("/login");
+
   return (
     <div className="dashboard-shell">
       <DashboardSidebar />

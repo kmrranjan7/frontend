@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { dashboardAuthHeaders } from "@/lib/auth/session";
 
 const backendOrigin = process.env.NEXT_PUBLIC_BACKEND_API_URL?.replace(/\/$/, "");
 
@@ -21,7 +22,10 @@ async function proxyPostRequest(
       `${backendOrigin}/api/v1/posts/${encodeURIComponent(postId)}`,
       {
         method,
-        headers: method === "PUT" ? { "Content-Type": "application/json" } : undefined,
+        headers: {
+          ...(method === "PUT" ? { "Content-Type": "application/json" } : {}),
+          ...(await dashboardAuthHeaders()),
+        },
         body: method === "PUT" ? await request.text() : undefined,
         cache: "no-store",
       },

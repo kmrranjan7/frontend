@@ -3,6 +3,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { NextResponse } from "next/server";
+import { hasValidDashboardSession } from "@/lib/auth/session";
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
 
@@ -16,6 +17,13 @@ const mimeToExtension: Readonly<Record<string, string>> = {
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
+  if (!(await hasValidDashboardSession())) {
+    return NextResponse.json(
+      { success: false, message: "Authentication is required." },
+      { status: 401 },
+    );
+  }
+
   try {
     const formData = await request.formData();
     const file = formData.get("file");

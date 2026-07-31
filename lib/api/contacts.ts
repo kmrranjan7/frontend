@@ -1,4 +1,5 @@
 import { env } from "@/config/env";
+import { dashboardAuthHeaders } from "@/lib/auth/session";
 
 export type ContactItem = Readonly<{
   id: string;
@@ -40,11 +41,11 @@ export async function fetchContacts({
   const query = new URLSearchParams({
     page: String(page),
     size: String(size),
-    sortBy: "createdAt",
     sortDir,
   });
   const response = await fetch(`${env.backendApiUrl}/api/contact?${query}`, {
-    next: { revalidate: 30, tags: ["contacts"] },
+    headers: await dashboardAuthHeaders(),
+    cache: "no-store",
   });
   const payload = await response.json() as ContactApiResponse;
 

@@ -1,23 +1,23 @@
 import type { MetadataRoute } from "next";
 import { absoluteUrl } from "@/config/site";
-import { articles } from "@/data/content";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [
     { url: absoluteUrl("/"), changeFrequency: "daily", priority: 1 },
     { url: absoluteUrl("/jobs"), changeFrequency: "hourly", priority: 0.9 },
-    { url: absoluteUrl("/news"), changeFrequency: "daily", priority: 0.8 },
-    { url: absoluteUrl("/faq"), changeFrequency: "monthly", priority: 0.6 },
+    { url: absoluteUrl("/results"), changeFrequency: "hourly", priority: 0.9 },
+    { url: absoluteUrl("/admit-cards"), changeFrequency: "hourly", priority: 0.9 },
+    { url: absoluteUrl("/exams"), changeFrequency: "daily", priority: 0.8 },
+    { url: absoluteUrl("/answer-keys"), changeFrequency: "daily", priority: 0.8 },
+    { url: absoluteUrl("/syllabus"), changeFrequency: "weekly", priority: 0.7 },
+    { url: absoluteUrl("/admissions"), changeFrequency: "daily", priority: 0.8 },
+    { url: absoluteUrl("/image-compressor"), changeFrequency: "monthly", priority: 0.5 },
     { url: absoluteUrl("/about"), changeFrequency: "monthly", priority: 0.5 },
+    { url: absoluteUrl("/contact"), changeFrequency: "monthly", priority: 0.5 },
+    { url: absoluteUrl("/privacy-policy"), changeFrequency: "yearly", priority: 0.3 },
+    { url: absoluteUrl("/terms-and-conditions"), changeFrequency: "yearly", priority: 0.3 },
+    { url: absoluteUrl("/disclaimer"), changeFrequency: "yearly", priority: 0.3 },
   ];
 
-  return [
-    ...staticPages,
-    ...articles.map((article) => ({
-      url: absoluteUrl(`/news/${article.slug}`),
-      lastModified: article.dateModified,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    })),
-  ];
+  return staticPages;
 }
