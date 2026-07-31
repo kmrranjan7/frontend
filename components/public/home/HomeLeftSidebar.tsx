@@ -133,6 +133,9 @@ export default function HomeLeftSidebar({
                 <button type="button" onClick={() => void latestFeed.loadMore()} className="text-[9px] font-semibold text-indigo-700 underline underline-offset-2">Try again</button>
               </li>
             ) : null}
+            {!latestFeed.hasMore && latestFeed.items.length > 10 ? (
+              <li className="py-1.5 text-center text-[8px] font-medium text-slate-400">You have reached the latest available updates.</li>
+            ) : null}
           </ul>
         </div>
       </section>
@@ -172,6 +175,9 @@ export default function HomeLeftSidebar({
               <li className="py-1 text-center">
                 <button type="button" onClick={() => void examFeed.loadMore()} className="text-[9px] font-semibold text-indigo-700 underline underline-offset-2">Try again</button>
               </li>
+            ) : null}
+            {!examFeed.hasMore && examFeed.items.length > 10 ? (
+              <li className="py-1.5 text-center text-[8px] font-medium text-slate-400">You have reached the latest available updates.</li>
             ) : null}
           </ul>
         </div>

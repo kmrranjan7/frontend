@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { publicNavigation } from "@/config/navigation";
 import { Icon, type IconName } from "@/components/ui/Icon";
+import { announceHeaderPopover, HEADER_POPOVER_OPEN_EVENT, type HeaderPopoverName } from "@/lib/header-popovers";
 
 const navigationIcons: readonly IconName[] = [
   "grid",
@@ -32,6 +33,20 @@ export function PublicBottomNav() {
   const isActive = (href: string) => href === "/" ? pathname === "/" : pathname.startsWith(href);
   const isMoreActive = moreItems.some((item) => isActive(item.href));
 
+  function toggleMoreMenu() {
+    const next = !isMoreOpen;
+    if (next) announceHeaderPopover("bottom-more");
+    setIsMoreOpen(next);
+  }
+
+  useEffect(() => {
+    const closeForAnotherPopover = (event: Event) => {
+      if ((event as CustomEvent<HeaderPopoverName>).detail !== "bottom-more") setIsMoreOpen(false);
+    };
+    window.addEventListener(HEADER_POPOVER_OPEN_EVENT, closeForAnotherPopover);
+    return () => window.removeEventListener(HEADER_POPOVER_OPEN_EVENT, closeForAnotherPopover);
+  }, []);
+
   useEffect(() => {
     if (!isMoreOpen) return;
 
@@ -52,6 +67,7 @@ export function PublicBottomNav() {
             className={isActive(item.href) ? "active" : ""}
             key={item.label}
             href={item.href}
+            prefetch={false}
           >
             <span><Icon name={navigationIcons[index]} size={15} /></span>
             <small>{item.label}</small>
@@ -62,10 +78,10 @@ export function PublicBottomNav() {
             type="button"
             aria-expanded={isMoreOpen}
             aria-controls="public-bottom-more-menu"
-            onClick={() => setIsMoreOpen((open) => !open)}
+            onClick={toggleMoreMenu}
             onTouchEnd={(event) => {
               event.preventDefault();
-              setIsMoreOpen((open) => !open);
+              toggleMoreMenu();
             }}
           >
             <span><Icon name="menu" size={15} /></span>
@@ -93,6 +109,7 @@ export function PublicBottomNav() {
                 className={isActive(item.href) ? "active" : ""}
                 key={item.label}
                 href={item.href}
+                prefetch={false}
                 onClick={() => setIsMoreOpen(false)}
               >
                 <span><Icon name={navigationIcons[index + primaryItems.length] ?? "grid"} size={16} /></span>

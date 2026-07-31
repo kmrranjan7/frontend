@@ -19,7 +19,7 @@ export function LatestNewsFlash() {
       <div className="latest-news-window">
         <div className="latest-news-track">
           {[...latestNews, ...latestNews].map((item, index) => (
-            <Link href={item.href} key={`${item.href}-${index}`}>
+            <Link href={item.href} prefetch={false} key={`${item.href}-${index}`}>
               <span>Update</span>{item.label}<i aria-hidden="true">→</i>
             </Link>
           ))}

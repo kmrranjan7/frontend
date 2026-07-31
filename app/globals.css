@@ -313,9 +313,15 @@ button { cursor: pointer; }
 .public-listing-empty strong { color: #172554; font-size: 14px; }
 .public-listing-empty span { font-size: 11px; }
 .public-listing-empty a { margin-top: 4px; color: #2563eb; font-size: 11px; font-weight: 800; }
-.breadcrumbs ol { display: flex; flex-wrap: wrap; gap: 7px; padding: 0; margin: 0; list-style: none; color: #887e83; font-size: 11px; }
-.breadcrumbs li { display: flex; gap: 7px; }
-.breadcrumbs a:hover { color: var(--lavender); text-decoration: underline; }
+
+.breadcrumbs { width: fit-content; max-width: 100%; margin-bottom: 12px; }
+.breadcrumbs ol { min-height: 26px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; position: relative; padding: 0 0 0 11px; margin: 0; list-style: none; color: #64748b; font-size: 10px; letter-spacing: .015em; }
+.breadcrumbs ol::before { width: 3px; position: absolute; top: 5px; bottom: 5px; left: 0; border-radius: 999px; background: linear-gradient(#2563eb, #60a5fa); content: ""; }
+.breadcrumbs li { min-width: 0; display: flex; align-items: center; gap: 5px; }
+.breadcrumbs a { color: #2563eb; font-weight: 750; transition: color .18s ease; }
+.breadcrumbs a:hover { color: #1e40af; text-decoration: underline; text-underline-offset: 3px; }
+.breadcrumbs [aria-current="page"] { max-width: min(52vw, 320px); overflow: hidden; color: #334155; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+.breadcrumb-separator { color: #a5b4c7; font-size: 14px; font-weight: 400; line-height: 1; }
 .content-hero { max-width: 850px; padding: 60px 0 45px; }
 .content-label { margin: 0; color: var(--lavender); font-size: 10px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
 .content-hero h1 { margin: 12px 0 18px; font-size: clamp(37px, 5vw, 58px); line-height: 1.08; letter-spacing: -.05em; }

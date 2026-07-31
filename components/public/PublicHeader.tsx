@@ -3,6 +3,9 @@ import Link from "next/link";
 import logoImage from "@/app/logo.png";
 import { publicNavigation } from "@/config/navigation";
 import { Icon } from "@/components/ui/Icon";
+import { SavedJobsHeaderButton } from "@/components/public/SavedJobsHeaderButton";
+import { LatestUpdatesHeaderButton } from "@/components/public/LatestUpdatesHeaderButton";
+import { HeaderPopoverCoordinator } from "@/components/public/HeaderPopoverCoordinator";
 
 export function PublicHeader() {
   const primaryNavigation = publicNavigation.slice(0, 5);
@@ -11,7 +14,8 @@ export function PublicHeader() {
   return (
     <header className="public-header minimal-public-header">
       <div className="minimal-header-card">
-        <Link className="public-header-logo" href="/" aria-label="Sarkari Global Result home">
+        <HeaderPopoverCoordinator />
+        <Link className="public-header-logo" href="/" prefetch={false} aria-label="Sarkari Global Result home">
           <Image
             src={logoImage}
             alt="Sarkari Global Result"
@@ -26,6 +30,7 @@ export function PublicHeader() {
             <Link
               key={item.label}
               href={item.href}
+              prefetch={false}
             >
               {item.label}
             </Link>
@@ -46,6 +51,7 @@ export function PublicHeader() {
                   <Link
                     key={item.label}
                     href={item.href}
+                    prefetch={false}
                   >
                     <span>{item.label}</span><i>→</i>
                   </Link>
@@ -54,6 +60,8 @@ export function PublicHeader() {
             </div>
           </details>
         </nav>
+        <LatestUpdatesHeaderButton />
+        <SavedJobsHeaderButton />
       </div>
 
     </header>

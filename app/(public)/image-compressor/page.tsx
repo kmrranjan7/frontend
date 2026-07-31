@@ -1,7 +1,25 @@
 import type { Metadata } from "next";
 import { ImageCompressor } from "@/components/public/ImageCompressor";
-import { PublicInfoPage } from "@/components/public/PublicInfoPage";
+import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { createMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = createMetadata({ title: "Free Image Compressor", description: "Compress JPG, PNG, and WebP images privately in your browser.", path: "/image-compressor" });
-export default function Page() { return <PublicInfoPage title="Image Compressor" description="Reduce image file size privately—your image never leaves the browser." path="/image-compressor"><ImageCompressor /></PublicInfoPage>; }
+export const metadata: Metadata = createMetadata({
+    title: "Free Image Compressor, PDF Converter & Image Converter Online",
+    description:
+      "Compress JPG, JPEG, PNG, and WebP images online for free. Convert Images to PDF, PDF to JPG, PDF to PNG, JPG to PNG, PNG to JPG, WebP Converter, Image Resizer, and Image Optimizer. Fast, secure, and private browser-based tools.",
+    path: "/image-compressor",
+  
+  });
+export default function Page() {
+  return (
+    <div className="content-page shell">
+      <Breadcrumbs
+        items={[
+          { name: "Home", path: "/" },
+          { name: "Image Compressor", path: "/image-compressor" },
+        ]}
+      />
+      <ImageCompressor />
+    </div>
+  );
+}

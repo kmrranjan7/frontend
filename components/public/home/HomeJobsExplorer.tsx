@@ -19,6 +19,7 @@ import {
   JOBS_BATCH_SIZE,
 } from "@/lib/api/client-post-listings";
 import type { PostListingItem } from "@/lib/api/post-listings";
+import { readSavedJobs, SAVED_JOBS_STORAGE_KEY, writeSavedJobs } from "@/lib/saved-jobs";
 
 const searchableJobText = new WeakMap<PostListingItem, string>();
 
@@ -126,6 +127,7 @@ export default function HomeJobsExplorer({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(jobs.length === JOBS_BATCH_SIZE);
   const [currentPage, setCurrentPage] = useState(0);
+  const [savedJobs, setSavedJobs] = useState<readonly PostListingItem[]>([]);
   const requestController = useRef<AbortController | null>(null);
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const loadMoreTrigger = useRef<HTMLDivElement | null>(null);
@@ -141,6 +143,52 @@ export default function HomeJobsExplorer({
     [renderedJobs],
   );
   const hasFilters = Boolean(searchValue || stateValue || qualificationValue);
+  const savedJobIds = useMemo(() => new Set(savedJobs.map((job) => job.id)), [savedJobs]);
+
+  function updateSavedState(savedJobs: readonly PostListingItem[]) {
+    setSavedJobs(savedJobs);
+  }
+
+  function toggleSavedJob(job: PostListingItem) {
+    const savedJobs = readSavedJobs();
+    const alreadySaved = savedJobs.some((savedJob) => savedJob.id === job.id);
+    const nextSavedJobs = alreadySaved
+      ? savedJobs.filter((savedJob) => savedJob.id !== job.id)
+      : [job, ...savedJobs];
+
+    try {
+      writeSavedJobs(nextSavedJobs);
+      updateSavedState(nextSavedJobs);
+    } catch {
+      // Storage can be unavailable in strict privacy mode; leave the UI unchanged.
+    }
+  }
+
+  async function shareJob(job: PostListingItem) {
+    const url = new URL("/jobs", window.location.origin);
+    url.searchParams.set("q", job.title);
+    const shareData = {
+      title: job.title,
+      text: `${job.title} — view details on Sarkari Global Result.`,
+      url: url.toString(),
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+      }
+    } catch (error) {
+      if (!(error instanceof DOMException && error.name === "AbortError")) {
+        try {
+          await navigator.clipboard.writeText(shareData.url);
+        } catch {
+          // Clipboard access can be unavailable in strict browser privacy modes.
+        }
+      }
+    }
+  }
 
   function matchesLocalFilters(
     job: PostListingItem,
@@ -280,6 +328,18 @@ export default function HomeJobsExplorer({
     if (searchTimer.current) clearTimeout(searchTimer.current);
   }, []);
 
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => updateSavedState(readSavedJobs()));
+    const syncSavedJobs = (event: StorageEvent) => {
+      if (event.key === SAVED_JOBS_STORAGE_KEY) updateSavedState(readSavedJobs());
+    };
+    window.addEventListener("storage", syncSavedJobs);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("storage", syncSavedJobs);
+    };
+  }, []);
+
   return (
     <section
       className="relative block w-full min-w-0 max-w-full overflow-x-hidden"
@@ -300,14 +360,8 @@ export default function HomeJobsExplorer({
             </div>
           </div>
 
-          <Link
-            href="/jobs"
-            className="w-full max-w-full shrink-0 rounded-lg bg-gradient-to-r from-rose-600 to-red-600 px-2 py-1 text-center text-[9px] font-bold leading-4 text-white shadow-sm ring-1 ring-rose-700 sm:w-auto"
-          >
-            <span className="inline-flex items-center justify-center gap-1">
-              Closing This Week: {closingThisWeek}
-              <Icon name="chevron" size={12} />
-            </span>
+          <Link href="/jobs" className="w-full max-w-full shrink-0 rounded-lg bg-gradient-to-r from-rose-600 to-red-600 px-2 py-1 text-center text-[9px] font-bold leading-4 text-white shadow-sm ring-1 ring-rose-700 sm:w-auto">
+            <span className="inline-flex items-center justify-center gap-1">Closing This Week: {closingThisWeek}<Icon name="chevron" size={12} /></span>
           </Link>
         </div>
 
@@ -378,8 +432,9 @@ export default function HomeJobsExplorer({
         <div className="overflow-visible pr-0 lg:max-h-[82vh] lg:overflow-y-auto lg:pr-1 lg:[scrollbar-gutter:stable] lg:[scrollbar-color:#0284c7_#e2e8f0]">
           <div className="grid min-w-0 grid-cols-1 gap-2 px-0 min-[560px]:grid-cols-2 lg:gap-2.5 xl:grid-cols-3">
             {renderedJobs.map(({ job, deadline }) => {
+              const isSaved = savedJobIds.has(job.id);
               return (
-                <article key={job.id} className="group flex min-w-0 flex-col rounded-lg border border-slate-200/90 bg-white p-2 shadow-sm transition-shadow hover:border-cyan-200 hover:shadow-md sm:rounded-md sm:p-1.5">
+                <article key={job.id} className="group relative flex min-w-0 flex-col rounded-lg border border-slate-200/90 bg-white p-2 shadow-sm transition-shadow hover:border-cyan-200 hover:shadow-md sm:rounded-md sm:p-1.5">
                   <div className="flex items-start justify-between gap-1">
                     <span className={`max-w-[58%] truncate rounded-full px-1.5 py-0.5 text-[9px] font-black uppercase tracking-[0.08em] ${getBadgeStyle(job.department || job.title)}`}>
                       {organizationCode(job.department)}
@@ -393,15 +448,33 @@ export default function HomeJobsExplorer({
                     {job.title}
                   </Link>
 
-                  <div className="mt-1 grid grid-cols-2 gap-x-1.5 gap-y-0.5 border-t border-slate-100 pt-1 text-[8px] leading-3 text-slate-600 sm:text-[9px]">
+                  <div className="mt-1 grid grid-cols-2 gap-x-1.5 gap-y-0.5 border-t border-slate-100 pt-1 pr-7 text-[8px] leading-3 text-slate-600 sm:text-[9px]">
                     <p className="m-0 min-w-0"><span className="block font-bold uppercase tracking-wide text-slate-400">State</span><span className="line-clamp-1 font-semibold text-slate-700">{job.state || "All India"}</span></p>
-                    <p className="m-0 min-w-0"><span className="block font-bold uppercase tracking-wide text-slate-400">Qualification</span><span className="line-clamp-1 font-semibold text-emerald-700">{job.qualification || "See Notification"}</span></p>
+                    <p className="m-0 min-w-0"><span className="block font-bold uppercase tracking-wide text-slate-400">Seats</span><span className="line-clamp-1 font-semibold text-emerald-700">{job.vacancies?.toLocaleString("en-IN") ?? "Not specified"}</span></p>
                     <p className="m-0 min-w-0"><span className="block font-bold uppercase tracking-wide text-slate-400">Starts</span><span className="line-clamp-1 font-semibold text-slate-700">{formatDate(job.startDate)}</span></p>
-                    <div className="flex min-w-0 items-end justify-between gap-1">
+                    <div className="min-w-0">
                       <p className="m-0 min-w-0"><span className="block font-bold uppercase tracking-wide text-slate-400">Last date</span><span className="line-clamp-1 font-bold text-rose-700">{formatDate(job.lastDate)}</span></p>
-                      <Link href="/jobs" aria-label={`View ${job.title}`} className="inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700">
-                        <Icon name="chevron" size={11} />
-                      </Link>
+                      <span className="absolute right-1.5 bottom-1.5 flex shrink-0 flex-col items-center gap-1">
+                        <button
+                          type="button"
+                          aria-label={isSaved ? `Remove ${job.title} from saved jobs` : `Save ${job.title}`}
+                          aria-pressed={isSaved}
+                          title={isSaved ? "Remove from saved jobs" : "Save job"}
+                          onClick={() => toggleSavedJob(job)}
+                          className={`inline-flex size-6 items-center justify-center rounded-full border transition ${isSaved ? "border-rose-300 bg-rose-50 text-rose-600" : "border-slate-200 bg-white text-slate-500 hover:border-rose-300 hover:bg-rose-50 hover:text-rose-600"}`}
+                        >
+                          <Icon name="heart" size={11} filled={isSaved} />
+                        </button>
+                        <button
+                          type="button"
+                          aria-label={`Share ${job.title}`}
+                          title="Share job"
+                          onClick={() => void shareJob(job)}
+                          className="inline-flex size-6 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700"
+                        >
+                          <Icon name="share" size={11} />
+                        </button>
+                      </span>
                     </div>
                   </div>
                 </article>

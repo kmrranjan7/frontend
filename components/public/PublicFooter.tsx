@@ -10,10 +10,10 @@ export function PublicFooter() {
           <p>Government job and education updates for students across India.</p>
         </div>
         <div className="footer-links">
-          <Link href="/jobs">Latest Jobs</Link>
-          <Link href="/results">Results</Link>
-          <Link href="/contact">Contact</Link>
-          <Link href="/about">About</Link>
+          <Link href="/jobs" prefetch={false}>Latest Jobs</Link>
+          <Link href="/results" prefetch={false}>Results</Link>
+          <Link href="/contact" prefetch={false}>Contact</Link>
+          <Link href="/about" prefetch={false}>About</Link>
         </div>
       </div>
       <div className="shell footer-bottom">

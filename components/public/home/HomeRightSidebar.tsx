@@ -37,6 +37,7 @@ function SidebarCard({
   onScroll,
   isLoading = false,
   loadFailed = false,
+  hasMore = true,
   onRetry,
 }: {
   title: string;
@@ -47,6 +48,7 @@ function SidebarCard({
   onScroll?: UIEventHandler<HTMLDivElement>;
   isLoading?: boolean;
   loadFailed?: boolean;
+  hasMore?: boolean;
   onRetry?: () => void;
 }) {
   return (
@@ -112,6 +114,9 @@ function SidebarCard({
               <button type="button" onClick={onRetry} className="text-[9px] font-semibold text-indigo-700 underline underline-offset-2">Try again</button>
             </li>
           ) : null}
+          {!hasMore && items.length > 10 ? (
+            <li className="py-1.5 text-center text-[8px] font-medium text-slate-400">You have reached the latest available updates.</li>
+          ) : null}
         </ul>
       </div>
     </section>
@@ -139,6 +144,7 @@ export default function HomeRightSidebar({
         onScroll={admitFeed.onScroll}
         isLoading={admitFeed.isLoading}
         loadFailed={admitFeed.loadFailed}
+        hasMore={admitFeed.hasMore}
         onRetry={() => void admitFeed.loadMore()}
       />
       <SidebarCard
@@ -150,6 +156,7 @@ export default function HomeRightSidebar({
         onScroll={resultFeed.onScroll}
         isLoading={resultFeed.isLoading}
         loadFailed={resultFeed.loadFailed}
+        hasMore={resultFeed.hasMore}
         onRetry={() => void resultFeed.loadMore()}
       />
     </aside>

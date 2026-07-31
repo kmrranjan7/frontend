@@ -57,5 +57,5 @@ export function useInfiniteSidebarListings(
     }
   }
 
-  return { items, isLoading, loadFailed, loadMore, onScroll };
+  return { items, hasMore, isLoading, loadFailed, loadMore, onScroll };
 }
