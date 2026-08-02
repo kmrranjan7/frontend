@@ -26,7 +26,7 @@ export const metadata: Metadata = createMetadata({
   ],
 });
 
-async function loadPublishedPosts(postType: PostTypeSlug, search = "", size = 10) {
+async function loadPublishedPosts(postType?: PostTypeSlug, search = "", size = 10) {
   try {
     const result = await fetchPostListings({
       postType,
@@ -51,7 +51,7 @@ export default async function HomePage({
   const selectedQualification = query.qualification?.trim() ?? "";
   const [jobPosts, otherPosts, examPosts, admitPosts, resultPosts] = await Promise.all([
     loadPublishedPosts("job", search, JOBS_BATCH_SIZE),
-    loadPublishedPosts("other"),
+    loadPublishedPosts(),
     loadPublishedPosts("exam"),
     loadPublishedPosts("admit"),
     loadPublishedPosts("result"),

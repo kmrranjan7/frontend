@@ -60,8 +60,10 @@ export function PublicHeader() {
             </div>
           </details>
         </nav>
-        <LatestUpdatesHeaderButton />
-        <SavedJobsHeaderButton />
+        <div className="minimal-header-actions">
+          <LatestUpdatesHeaderButton />
+          <SavedJobsHeaderButton />
+        </div>
       </div>
 
     </header>

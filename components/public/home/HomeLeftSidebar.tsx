@@ -91,7 +91,7 @@ export default function HomeLeftSidebar({
   latestUpdates: readonly PostListingItem[];
   exams: readonly PostListingItem[];
 }) {
-  const latestFeed = useInfiniteSidebarListings(latestUpdates, "OTHERS");
+  const latestFeed = useInfiniteSidebarListings(latestUpdates);
   const examFeed = useInfiniteSidebarListings(exams, "EXAM");
 
   return (

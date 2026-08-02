@@ -16,20 +16,20 @@ async function requestPublishedListings({
   search = "",
   signal,
 }: {
-  postType: string;
+  postType?: string;
   page: number;
   size: number;
   search?: string;
   signal?: AbortSignal;
 }): Promise<PostListingPage> {
   const query = new URLSearchParams({
-    postType,
     status: "PUBLISHED",
     sortDir: "desc",
     page: String(page),
     size: String(size),
   });
 
+  if (postType) query.set("postType", postType);
   if (search.trim()) query.set("search", search.trim());
 
   const response = await fetch(`/api/v1/jobs?${query}`, {
@@ -68,7 +68,7 @@ export function fetchSidebarListings({
   page,
   signal,
 }: {
-  postType: "OTHERS" | "ADMIT" | "EXAM" | "RESULT";
+  postType?: "OTHERS" | "ADMIT" | "EXAM" | "RESULT";
   page: number;
   signal?: AbortSignal;
 }) {

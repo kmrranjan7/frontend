@@ -53,7 +53,6 @@ export function LatestUpdatesHeaderButton() {
 
     try {
       const page = await fetchSidebarListings({
-        postType: "OTHERS",
         page: nextPageRef.current,
         signal: controller.signal,
       });
@@ -104,7 +103,7 @@ export function LatestUpdatesHeaderButton() {
   }, []);
 
   return (
-    <div className="relative ml-1 shrink-0">
+    <div className="relative shrink-0">
       <button
         type="button"
         aria-label="View latest notifications"

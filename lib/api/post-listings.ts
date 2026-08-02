@@ -56,7 +56,7 @@ export async function fetchPostListings({
   sortDir = "desc",
   status,
 }: {
-  postType: PostTypeSlug;
+  postType?: PostTypeSlug;
   page?: number;
   size?: number;
   search?: string;
@@ -64,12 +64,12 @@ export async function fetchPostListings({
   status?: "PUBLISHED" | "DRAFT";
 }): Promise<PostListingPage> {
   const query = new URLSearchParams({
-    postType: postTypeConfig[postType].apiValue,
     page: String(page),
     size: String(size),
     sortDir,
   });
 
+  if (postType) query.set("postType", postTypeConfig[postType].apiValue);
   if (search.trim()) query.set("search", search.trim());
   if (status) query.set("status", status);
 

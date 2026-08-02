@@ -51,7 +51,7 @@ export function SavedJobsHeaderButton() {
   }
 
   return (
-    <div className="relative ml-1 shrink-0">
+    <div className="relative shrink-0">
       <button type="button" aria-label={`Saved updates: ${savedJobs.length}`} aria-expanded={open} onClick={toggleSavedJobs} className={`relative inline-flex size-8 items-center justify-center rounded-full border text-rose-600 transition ${open ? "border-rose-300 bg-rose-50" : "border-rose-200 bg-white hover:border-rose-300 hover:bg-rose-50"}`}>
         <Icon name="heart" size={14} filled />
         {savedJobs.length ? <span className="absolute -right-1 -top-1 grid min-w-4 h-4 place-items-center rounded-full bg-rose-600 px-1 text-[7px] font-bold text-white ring-2 ring-white">{savedJobs.length > 99 ? "99+" : savedJobs.length}</span> : null}

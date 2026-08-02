@@ -6,7 +6,7 @@ import type { PostListingItem } from "@/lib/api/post-listings";
 
 export function useInfiniteSidebarListings(
   initialItems: readonly PostListingItem[],
-  postType: "OTHERS" | "ADMIT" | "EXAM" | "RESULT",
+  postType?: "OTHERS" | "ADMIT" | "EXAM" | "RESULT",
 ) {
   const [items, setItems] = useState(initialItems);
   const [hasMore, setHasMore] = useState(initialItems.length >= SIDEBAR_BATCH_SIZE);

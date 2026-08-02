@@ -122,7 +122,7 @@ button { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .minimal-public-header::before { animation: none; background-position: center; }
 }
-.minimal-header-card { width: 100%; height: 64px; display: flex; align-items: center; gap: 22px; padding: 0 28px; border: 0; border-bottom: 1px solid #dbe4ef; border-radius: 0; background: #fff; box-shadow: none; }
+.minimal-header-card { width: 100%; height: 64px; display: flex; align-items: center; gap: 22px; position: relative; padding: 0 28px; border: 0; border-bottom: 1px solid #dbe4ef; border-radius: 0; background: #fff; box-shadow: none; }
 .minimal-header-card > .logo { flex: none; color: #172554; font-size: 19px; }
 .minimal-header-card > .logo .logo-mark { filter: drop-shadow(0 6px 8px rgb(37 99 235 / 20%)); }
 .public-header-logo { width: 200px; display: inline-flex; align-items: center; position: relative; flex: none; }
@@ -151,7 +151,8 @@ button { cursor: pointer; }
   .latest-news-track, .latest-news-flash > strong small i { animation: none; }
   .latest-news-window { overflow-x: auto; }
 }
-.minimal-primary-nav { display: flex; align-items: center; gap: 3px; margin-left: auto; }
+.minimal-primary-nav { display: flex; align-items: center; gap: 3px; margin-left: auto; margin-right: 72px; }
+.minimal-header-actions { display: flex; align-items: center; gap: 8px; position: absolute; top: 50%; right: 16px; transform: translateY(-50%); }
 .minimal-primary-nav > a { min-height: 40px; display: flex; align-items: center; position: relative; padding: 0 12px; border-radius: 6px; color: #52637a; font-size: 12px; font-weight: 700; transition: .18s ease; white-space: nowrap; }
 .minimal-primary-nav > a::after { height: 2px; position: absolute; right: 12px; bottom: 2px; left: 12px; border-radius: 2px; background: #2563eb; content: ""; opacity: 0; transform: scaleX(.45); transition: .18s ease; }
 .minimal-primary-nav > a:hover { background: #f8fafc; color: #1d4ed8; }
@@ -782,6 +783,7 @@ button { cursor: pointer; }
   .public-trust-note, .public-category-bar { display: none; }
   .minimal-public-header { height: 58px; padding-top: 0; }
   .minimal-header-card { height: 58px; padding-inline: 15px 12px; border-radius: 0; }
+  .minimal-header-actions { right: 12px; }
   .minimal-header-card > .logo { font-size: 17px; }
   .public-header-logo { width: 165px; }
   .public-header-logo::after { display: none; }
