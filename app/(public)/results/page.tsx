@@ -4,6 +4,7 @@ import { createMetadata } from "@/lib/seo/metadata";
 import { POST_SEARCH_MAX_LENGTH } from "@/config/search";
 import { fetchPostListings } from "@/lib/api/post-listings";
 import { PublicListingActions } from "@/components/public/PublicListingActions";
+import { PublicPostListing } from "@/components/public/PublicPostListing";
 
 export const metadata: Metadata = createMetadata({
   title: "Latest Government Exam Results",
@@ -70,38 +71,33 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
           <span className="shrink-0 rounded-full border border-emerald-100 bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700 sm:text-[10px]">Candidate guidance</span>
         </section>
 
-        <section className="overflow-hidden rounded-xl border border-cyan-100/90 bg-white/92 shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
-          <div className="flex flex-wrap items-center justify-between gap-1.5 border-b border-slate-100 bg-slate-50/80 px-2.5 py-1.5 sm:px-3">
-            <div><h2 className="text-[13px] font-black text-slate-900 sm:text-sm">Latest Updates</h2><p className="text-[10px] text-slate-500 sm:text-[11px]">Open an update to view the latest published result notice.</p></div>
-            <div className="flex items-center gap-2">
-              <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[9px] font-bold text-indigo-700 sm:text-[10px]">{rows.length} updates</span>
-              {search ? <Link href="/results" prefetch={false} className="text-[9px] font-bold text-blue-700 underline underline-offset-2">Clear search</Link> : null}
-            </div>
-          </div>
-
+        <section className="hidden overflow-hidden rounded-xl border border-cyan-100/90 bg-white/92 shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
           {rows.length ? (
             <>
               <div className="hidden overflow-x-auto lg:block">
-                <table className="min-w-full border-collapse text-left">
-                  <thead className="bg-gradient-to-br from-indigo-700 via-blue-600 to-cyan-500 text-white">
+                <table className="min-w-[940px] w-full table-fixed border-separate border-spacing-0 text-left">
+                  <thead className="bg-gradient-to-r from-indigo-700 via-blue-600 to-cyan-500 text-white">
                     <tr>
-                      <th className="w-[49%] px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em]">Result</th>
-                      <th className="w-[15%] px-2 py-2 text-[10px] font-black uppercase tracking-[0.12em]">Organization</th>
-                      <th className="w-[12%] px-2 py-2 text-[10px] font-black uppercase tracking-[0.12em]">State</th>
-                      <th className="w-[10%] px-2 py-2 text-[10px] font-black uppercase tracking-[0.12em]">Released</th>
-                      <th className="w-[14%] px-1.5 py-2 text-right text-[10px] font-black uppercase tracking-[0.12em]">Actions</th>
+                      <th className="w-[40%] px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.12em]">Result update</th>
+                      <th className="w-[17%] px-3 py-2.5 text-[10px] font-black uppercase tracking-[0.12em]">Organization</th>
+                      <th className="w-[12%] px-3 py-2.5 text-[10px] font-black uppercase tracking-[0.12em]">State</th>
+                      <th className="w-[11%] px-3 py-2.5 text-[10px] font-black uppercase tracking-[0.12em]">Released</th>
+                      <th className="w-[20%] px-3 py-2.5 text-right text-[10px] font-black uppercase tracking-[0.12em]">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {rows.map((row) => (
-                      <tr key={row.id} className="border-t border-slate-100 transition-colors hover:bg-cyan-50/50">
-                        <td className="max-w-[520px] px-3 py-1.5">
-                          <div className="flex items-center justify-between gap-3"><strong className="line-clamp-2 text-[13px] leading-[18px] text-slate-900">{row.title}</strong><span className="shrink-0 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[9px] font-bold text-emerald-700">Released</span></div>
+                      <tr key={row.id} className="group border-t border-slate-100 bg-white transition-colors even:bg-slate-50/55 hover:bg-cyan-50/70">
+                        <td className="px-4 py-3">
+                          <div className="flex items-start gap-2.5">
+                            <span className="mt-0.5 inline-flex h-5 shrink-0 items-center rounded-full border border-emerald-200 bg-emerald-50 px-1.5 text-[8px] font-black uppercase tracking-[0.08em] text-emerald-700">New</span>
+                            <strong className="line-clamp-2 text-[13px] leading-[18px] text-slate-900 transition-colors group-hover:text-indigo-800">{row.title}</strong>
+                          </div>
                         </td>
-                        <td className="px-2 py-1.5"><span className="inline-block max-w-48 truncate rounded-full border border-cyan-200 bg-cyan-50 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.06em] text-cyan-800">{row.department || "Sarkari Global Result"}</span></td>
-                        <td className="px-2 py-1.5 text-[11px] font-semibold text-slate-700">{row.state || "All India"}</td>
-                        <td className="px-2 py-1.5 text-[11px] font-semibold text-slate-700">{formatDate(row.startDate)}</td>
-                        <td className="px-1.5 py-1.5"><PublicListingActions item={row} viewHref={`/results?q=${encodeURIComponent(row.title)}`} /></td>
+                        <td className="px-3 py-3"><span className="inline-block max-w-full truncate rounded-full border border-cyan-200 bg-cyan-50 px-2 py-1 text-[9px] font-black uppercase tracking-[0.06em] text-cyan-800">{row.department || "Sarkari Global Result"}</span></td>
+                        <td className="px-3 py-3 text-[11px] font-semibold text-slate-700"><span className="line-clamp-2">{row.state || "All India"}</span></td>
+                        <td className="px-3 py-3 text-[11px] font-semibold tabular-nums text-slate-700">{formatDate(row.startDate)}</td>
+                        <td className="px-3 py-3"><PublicListingActions item={row} viewHref={`/results?q=${encodeURIComponent(row.title)}`} /></td>
                       </tr>
                     ))}
                   </tbody>
@@ -133,6 +129,15 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
             </div>
           )}
         </section>
+
+        <PublicPostListing
+          items={rows}
+          basePath="/results"
+          singularLabel="Result"
+          emptyMessage="No results available right now"
+          postType="RESULT"
+          icon="trophy"
+        />
 
         <section className="grid gap-2 md:grid-cols-2">
           <article className="rounded-xl border border-cyan-100/90 bg-white/92 p-2.5 shadow-[0_8px_20px_rgba(15,23,42,0.06)] sm:p-3">

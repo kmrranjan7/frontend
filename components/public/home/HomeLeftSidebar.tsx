@@ -118,7 +118,7 @@ export default function HomeLeftSidebar({
                   <FeedRow
                     key={item.id}
                     item={item}
-                    href="/others"
+                    href={`/${encodeURIComponent(item.slug)}`}
                     icon="layers"
                     badge={badgeLabel(item.department, "Update")}
                     isNew={index < 2}
@@ -162,7 +162,7 @@ export default function HomeLeftSidebar({
                   <FeedRow
                     key={item.id}
                     item={item}
-                    href="/exams"
+                    href={`/${encodeURIComponent(item.slug)}`}
                     icon="exam"
                     badge={badgeLabel(item.department, "Exam")}
                   />

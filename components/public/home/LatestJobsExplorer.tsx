@@ -105,7 +105,7 @@ function deadlineChip(value: string | null) {
   };
 }
 
-export default function HomeJobsExplorer({
+export default function LatestJobsExplorer({
   jobs,
   search,
   selectedState,
@@ -432,7 +432,35 @@ export default function HomeJobsExplorer({
 
       <div className="mt-4 w-full min-w-0">
         <div className="overflow-visible pr-0 lg:max-h-[82vh] lg:overflow-y-auto lg:pr-1 lg:[scrollbar-gutter:stable] lg:[scrollbar-color:#0284c7_#e2e8f0]">
-          <div className="grid min-w-0 grid-cols-1 gap-2 px-0 min-[560px]:grid-cols-2 lg:gap-2.5 xl:grid-cols-3">
+          <div className="hidden overflow-x-auto lg:block">
+            <table className="min-w-[940px] w-full table-fixed border-separate border-spacing-0 overflow-hidden rounded-xl border border-slate-200 text-left shadow-sm">
+              <thead className="bg-gradient-to-r from-indigo-700 via-blue-600 to-cyan-500 text-white">
+                <tr>
+                  <th className="w-[40%] px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.12em]">Job opportunity</th>
+                  <th className="w-[17%] px-3 py-2.5 text-[10px] font-black uppercase tracking-[0.12em]">Organization</th>
+                  <th className="w-[12%] px-3 py-2.5 text-[10px] font-black uppercase tracking-[0.12em]">State</th>
+                  <th className="w-[11%] px-3 py-2.5 text-[10px] font-black uppercase tracking-[0.12em]">Last date</th>
+                  <th className="w-[20%] px-3 py-2.5 text-right text-[10px] font-black uppercase tracking-[0.12em]">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {renderedJobs.map(({ job, deadline }) => {
+                  const isSaved = savedJobIds.has(job.id);
+                  return (
+                    <tr key={job.id} className="group border-t border-slate-100 bg-white transition-colors even:bg-slate-50/55 hover:bg-cyan-50/70">
+                      <td className="px-4 py-3"><Link href={`/${encodeURIComponent(job.slug)}`} className="line-clamp-2 text-[13px] font-bold leading-[18px] text-slate-900 transition-colors group-hover:text-indigo-800">{job.title}</Link></td>
+                      <td className="px-3 py-3"><span className={`inline-block max-w-full truncate rounded-full px-2 py-1 text-[9px] font-black uppercase tracking-[0.06em] ${getBadgeStyle(job.department || job.title)}`}>{organizationCode(job.department)}</span></td>
+                      <td className="px-3 py-3 text-[11px] font-semibold text-slate-700">{job.state || "All India"}</td>
+                      <td className="px-3 py-3"><div className="flex items-center gap-3 whitespace-nowrap"><span className="text-[11px] font-semibold tabular-nums text-rose-700">{formatDate(job.lastDate)}</span><span className={`inline-flex rounded-full px-1.5 py-0.5 text-[8px] font-bold ${deadline.className}`}>{deadline.label}</span></div></td>
+                      <td className="px-3 py-3"><div className="flex flex-nowrap items-center justify-end gap-1"><Link href={`/${encodeURIComponent(job.slug)}`} className="inline-flex h-6 shrink-0 items-center rounded-md border border-indigo-200 bg-indigo-50 px-2 text-[8px] font-bold whitespace-nowrap text-indigo-700">View Details</Link><button type="button" onClick={() => void shareJob(job)} aria-label={`Share ${job.title}`} className="inline-flex size-6 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600"><Icon name="share" size={11} /></button><button type="button" onClick={() => toggleSavedJob(job)} aria-label={isSaved ? `Remove ${job.title} from saved jobs` : `Save ${job.title}`} aria-pressed={isSaved} className={`inline-flex size-6 shrink-0 items-center justify-center rounded-md border ${isSaved ? "border-rose-200 bg-rose-50 text-rose-600" : "border-slate-200 bg-white text-slate-500"}`}><Icon name="heart" size={11} filled={isSaved} /></button></div></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="grid min-w-0 grid-cols-1 gap-2 px-0 min-[560px]:grid-cols-2 lg:hidden">
             {renderedJobs.map(({ job, deadline }) => {
               const isSaved = savedJobIds.has(job.id);
               return (

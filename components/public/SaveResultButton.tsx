@@ -2,14 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui/Icon";
-import { readSavedJobs, writeSavedJobs, type SavedListingItem } from "@/lib/saved-jobs";
+import { readSavedJobs, SAVED_JOBS_CHANGED_EVENT, writeSavedJobs, type SavedListingItem } from "@/lib/saved-jobs";
 
 export function SaveResultButton({ item }: { item: SavedListingItem }) {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const frame = requestAnimationFrame(() => setSaved(readSavedJobs().some((savedItem) => savedItem.id === item.id)));
-    return () => cancelAnimationFrame(frame);
+    const sync = () => setSaved(readSavedJobs().some((savedItem) => savedItem.id === item.id));
+    const frame = requestAnimationFrame(sync);
+    window.addEventListener(SAVED_JOBS_CHANGED_EVENT, sync);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener(SAVED_JOBS_CHANGED_EVENT, sync);
+    };
   }, [item.id]);
 
   function toggleSaved() {

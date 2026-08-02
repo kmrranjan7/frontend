@@ -63,6 +63,23 @@ export async function fetchPublishedJobs({
   });
 }
 
+export function fetchPublishedPostTypeListings({
+  postType,
+  page = 0,
+  signal,
+}: {
+  postType: string;
+  page?: number;
+  signal?: AbortSignal;
+}) {
+  return requestPublishedListings({
+    postType,
+    page,
+    size: JOBS_BATCH_SIZE,
+    signal,
+  });
+}
+
 export function fetchSidebarListings({
   postType,
   page,

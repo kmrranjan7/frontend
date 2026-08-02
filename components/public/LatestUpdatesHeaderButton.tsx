@@ -32,6 +32,7 @@ export function LatestUpdatesHeaderButton() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [hasMore, setHasMore] = useState(true);
+  const popoverRef = useRef<HTMLDivElement | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
   const nextPageRef = useRef(0);
   const loadingRef = useRef(false);
@@ -102,8 +103,26 @@ export function LatestUpdatesHeaderButton() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      if (event.target instanceof Node && !popoverRef.current?.contains(event.target)) setOpen(false);
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsideClick);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsideClick);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [open]);
+
   return (
-    <div className="relative shrink-0">
+    <div ref={popoverRef} className="relative shrink-0">
       <button
         type="button"
         aria-label="View latest notifications"
@@ -147,7 +166,7 @@ export function LatestUpdatesHeaderButton() {
                         <span className="absolute -bottom-2.5 left-1/2 h-2 w-px -translate-x-1/2 bg-indigo-200/80" aria-hidden="true" />
                       </span>
                       <div className="min-w-0">
-                        <Link href={`/others?q=${encodeURIComponent(update.title)}`} prefetch={false} onClick={() => setOpen(false)} className="block truncate text-[10px] font-semibold text-slate-800 underline-offset-2 hover:text-indigo-700 hover:underline">{update.title}</Link>
+                        <Link href={`/${encodeURIComponent(update.slug)}`} prefetch={false} onClick={() => setOpen(false)} className="block truncate text-[10px] font-semibold text-slate-800 underline-offset-2 hover:text-indigo-700 hover:underline">{update.title}</Link>
                         <span className="block text-[8px] font-medium text-slate-500">{formatDate(update.startDate ?? update.lastDate)}</span>
                       </div>
                     </div>

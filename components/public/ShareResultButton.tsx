@@ -42,12 +42,11 @@ export function ShareResultButton({ title, href }: { title: string; href: string
   }
 
   return (
-    <div className="inline-flex flex-col items-start">
-      <button type="button" onClick={() => void share()} className="inline-flex size-[22px] items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/30 lg:h-6 lg:w-auto lg:min-w-[56px] lg:gap-1 lg:rounded-full lg:px-1.5 lg:text-[9px] lg:font-semibold lg:text-slate-700 lg:hover:border-slate-300 lg:hover:bg-slate-100" aria-label={`Share ${title}`}>
+    <div className="relative inline-flex shrink-0">
+      <button type="button" onClick={() => void share()} className="inline-flex size-[22px] items-center justify-center rounded-md border border-slate-200 bg-white text-slate-600 transition-colors hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/30" aria-label={`Share ${title}`}>
         <Icon name="share" size={10} />
-        <span className="hidden lg:inline">Share</span>
       </button>
-      {copied ? <p className="mt-0.5 text-[8px] font-semibold text-emerald-700">Link copied</p> : null}
+      {copied ? <p className="absolute right-0 top-full z-10 mt-0.5 whitespace-nowrap text-[8px] font-semibold text-emerald-700">Link copied</p> : null}
     </div>
   );
 }

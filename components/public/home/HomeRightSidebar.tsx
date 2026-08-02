@@ -31,7 +31,6 @@ function formatDate(value: string | null) {
 function SidebarCard({
   title,
   status,
-  href,
   icon,
   items,
   onScroll,
@@ -42,7 +41,6 @@ function SidebarCard({
 }: {
   title: string;
   status: string;
-  href: string;
   icon: Extract<IconName, "admit" | "chart">;
   items: readonly PostListingItem[];
   onScroll?: UIEventHandler<HTMLDivElement>;
@@ -84,7 +82,7 @@ function SidebarCard({
                       </span>
                       <div className="min-w-0">
                         <Link
-                          href={href}
+                          href={`/${encodeURIComponent(item.slug)}`}
                           prefetch={false}
                           className="block truncate text-[10px] font-semibold text-slate-800 underline-offset-2 transition-colors hover:text-indigo-700 hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/60"
                         >
@@ -138,7 +136,6 @@ export default function HomeRightSidebar({
       <SidebarCard
         title="Admit Card"
         status="New"
-        href="/admit-cards"
         icon="admit"
         items={admitFeed.items}
         onScroll={admitFeed.onScroll}
@@ -150,7 +147,6 @@ export default function HomeRightSidebar({
       <SidebarCard
         title="Result"
         status="Hot"
-        href="/results"
         icon="chart"
         items={resultFeed.items}
         onScroll={resultFeed.onScroll}

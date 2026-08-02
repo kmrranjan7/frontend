@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import HomeJobsExplorer from "@/components/public/home/HomeJobsExplorer";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
+import { PublicExploreSections } from "@/components/public/PublicExploreSections";
 import { POST_SEARCH_MAX_LENGTH } from "@/config/search";
 import { jobs as fallbackJobs } from "@/data/content";
 import { JOBS_BATCH_SIZE } from "@/lib/api/client-post-listings";
@@ -9,6 +9,7 @@ import {
   type PostListingItem,
 } from "@/lib/api/post-listings";
 import { createMetadata } from "@/lib/seo/metadata";
+import LatestJobsExplorer from "@/components/public/home/LatestJobsExplorer";
 
 export const metadata: Metadata = createMetadata({
   title: "Latest Government Jobs",
@@ -87,13 +88,16 @@ export default async function JobsPage({
           and official application information in one place.
         </p>
       </header>
-      <HomeJobsExplorer
+      <LatestJobsExplorer
         jobs={filteredJobs}
         search={search}
         selectedState={selectedState}
         selectedQualification={selectedQualification}
         basePath="/jobs"
       />
+      <div className="mt-5 sm:mt-6">
+        <PublicExploreSections />
+      </div>
     </div>
   );
 }
