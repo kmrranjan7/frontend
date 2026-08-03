@@ -5,6 +5,14 @@ const nextConfig: NextConfig = {
     qualities: [55, 75],
   },
   poweredByHeader: false,
+  async rewrites() {
+    return [
+      {
+        source: String.raw`/post-sitemap:page(\d+).xml`,
+        destination: "/api/sitemaps/posts/:page",
+      },
+    ];
+  },
   async headers() {
     const securityHeaders = [
       { key: "X-Content-Type-Options", value: "nosniff" },
