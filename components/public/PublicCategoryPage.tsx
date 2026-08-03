@@ -3,6 +3,7 @@ import { PublicExploreSections } from "@/components/public/PublicExploreSections
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import type { IconName } from "@/components/ui/Icon";
 import { POST_SEARCH_MAX_LENGTH } from "@/config/search";
+import { JOBS_BATCH_SIZE } from "@/lib/api/client-post-listings";
 import { fetchPostListings, postTypeConfig, type PostTypeSlug } from "@/lib/api/post-listings";
 
 export async function PublicCategoryPage({
@@ -27,7 +28,7 @@ export async function PublicCategoryPage({
   const items = await fetchPostListings({
     postType,
     search,
-    size: 30,
+    size: JOBS_BATCH_SIZE,
     status: "PUBLISHED",
   }).then((page) => page.content).catch(() => []);
 

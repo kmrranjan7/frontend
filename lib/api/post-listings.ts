@@ -78,7 +78,7 @@ export async function fetchPostListings({
   const response = await fetch(`${env.backendApiUrl}/api/v1/jobs?${query}`, {
     headers: status === "PUBLISHED" ? undefined : await dashboardAuthHeaders(),
     ...(status === "PUBLISHED"
-      ? { next: { revalidate: 60 } }
+      ? { next: { revalidate: 300 } }
       : { cache: "no-store" as const }),
   });
   const payload = await response.json() as ApiResponse;

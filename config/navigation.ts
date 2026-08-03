@@ -19,7 +19,6 @@ export const dashboardNavigation = [
   { label: "Overview", href: "/dashboard", icon: "grid" },
   { label: "New Post", href: "/dashboard/content/new", icon: "file" },
   { label: "Images", href: "/dashboard/images", icon: "image" },
-  { label: "Latest News", href: "/dashboard/latest-news", icon: "notification" },
 ];
 
 export const contentTypeNavigation = [

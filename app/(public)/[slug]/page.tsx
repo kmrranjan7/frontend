@@ -38,6 +38,30 @@ function plainText(html: string): string {
     .trim();
 }
 
+function openPostLinksInNewTab(html: string): string {
+  return html.replace(/<a\b([^>]*)>/gi, (_tag, rawAttributes: string) => {
+    let attributes = rawAttributes;
+    const targetPattern = /\btarget\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/i;
+
+    attributes = targetPattern.test(attributes)
+      ? attributes.replace(targetPattern, 'target="_blank"')
+      : `${attributes} target="_blank"`;
+
+    const relPattern = /\brel\s*=\s*(["'])(.*?)\1/i;
+    const relMatch = attributes.match(relPattern);
+    if (relMatch) {
+      const relValues = new Set(relMatch[2].split(/\s+/).filter(Boolean));
+      relValues.add("noopener");
+      relValues.add("noreferrer");
+      attributes = attributes.replace(relPattern, `rel="${[...relValues].join(" ")}"`);
+    } else {
+      attributes += ' rel="noopener noreferrer"';
+    }
+
+    return `<a${attributes}>`;
+  });
+}
+
 function fallbackDescription(post: PublicPost): string {
   const summary = plainText(post.contentHtml);
   if (!summary) return `Latest ${post.title} notification, important dates, eligibility and application details.`;
@@ -93,7 +117,7 @@ function longTailKeywords(post: PublicPost): string[] {
 
 async function getPost(slug: string): Promise<PublicPost | null> {
   const response = await fetch(`${env.backendApiUrl}/api/v1/jobs/slug/${encodeURIComponent(slug)}`, {
-    next: { revalidate: 60 },
+    next: { revalidate: 300 },
   });
   if (!response.ok) return null;
   const payload = await response.json() as { success?: boolean; data?: PublicPost };
@@ -128,6 +152,7 @@ export default async function PublicPostPage({ params }: { params: Promise<{ slu
   const post = await getPost((await params).slug);
   if (!post) notFound();
 
+  const contentHtml = openPostLinksInNewTab(post.contentHtml);
   const title = post.seoTitle?.trim() || post.title;
   const description = post.seoDescription?.trim() || fallbackDescription(post);
   const category = categoryForPostType(post.postType);
@@ -147,7 +172,7 @@ export default async function PublicPostPage({ params }: { params: Promise<{ slu
         <Breadcrumbs items={breadcrumbItems} />
         <article className="mt-3 rounded-xl border border-indigo-100 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
           <Link href={category.path} className="text-[11px] font-bold text-indigo-700 underline underline-offset-2">← Back to {category.name}</Link>
-          <div className="public-post-content prose prose-slate mt-6 max-w-none text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: post.contentHtml }} />
+          <div className="public-post-content prose prose-slate mt-6 max-w-none text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: contentHtml }} />
         </article>
       </div>
       <JsonLd data={articleJsonLd({

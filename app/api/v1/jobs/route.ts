@@ -27,7 +27,7 @@ export async function GET(request: Request) {
 
   try {
     const response = await fetch(`${backendOrigin}/api/v1/jobs?${query}`, {
-      cache: "no-store",
+      next: { revalidate: 300 },
     });
     const body = await response.text();
 

@@ -1,50 +1,62 @@
 import Link from "next/link";
+
 import { Icon } from "@/components/ui/Icon";
 import { env } from "@/config/env";
 
-type LatestNewsResponse = { success?: boolean; data?: { title?: string; link?: string }[] | null };
+type JobsResponse = Readonly<{
+  readonly success?: boolean;
+  readonly data?: Readonly<{
+    readonly content?: readonly Readonly<{
+      readonly id?: string;
+      readonly title?: string;
+      readonly slug?: string;
+    }>[];
+  }>;
+}>;
 
-async function loadLatestNews() {
+async function loadLatestUpdates() {
   try {
-    const response = await fetch(`${env.backendApiUrl}/api/v1/latest-news`, {
-      cache: "no-store",
+    const query = new URLSearchParams({
+      status: "PUBLISHED",
+      page: "0",
+      size: "10",
+      sortDir: "desc",
+    });
+    const response = await fetch(`${env.backendApiUrl}/api/v1/jobs?${query}`, {
+      next: { revalidate: 300 },
     });
     if (!response.ok) return [];
-    const payload = await response.json() as LatestNewsResponse;
-    const managed = (payload.data ?? []).flatMap((item) => {
-      const title = item.title?.trim(); const link = item.link?.trim();
-      return title && link ? [{ label: title, href: link }] : [];
+
+    const payload = (await response.json()) as JobsResponse;
+    return (payload.data?.content ?? []).flatMap((item) => {
+      const title = item.title?.trim();
+      const slug = item.slug?.trim();
+      return title && slug ? [{ id: item.id ?? slug, title, href: `/${encodeURIComponent(slug)}` }] : [];
     });
-    return managed;
   } catch {
     return [];
   }
 }
 
 export async function LatestNewsFlash() {
-  const newsItems = await loadLatestNews();
+  const updates = await loadLatestUpdates();
+
+  if (!updates.length) return null;
 
   return (
-    <section className="latest-news-flash" aria-label="Latest news">
+    <section className="latest-updates-flash" aria-label="Latest published updates">
       <strong>
-        <span className="latest-news-symbol"><Icon name="trend" size={13} /></span>
-        <span className="latest-news-label">Latest News</span>
-        <small><i aria-hidden="true" /> Live</small>
+        <span><Icon name="trend" size={13} /></span>
+        Latest Updates
       </strong>
-      <div className="latest-news-window">
-        {newsItems.length ? (
-          <div className="latest-news-track">
-            {[...newsItems, ...newsItems].map((item, index) => (
-              <Link href={item.href} prefetch={false} key={`${item.href}-${index}`}>
-                <span>New</span>{item.label}<i aria-hidden="true">→</i>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <p className="latest-news-empty" role="status">
-            Latest updates will appear here shortly.
-          </p>
-        )}
+      <div>
+        <div className="latest-updates-track">
+          {[...updates, ...updates].map((item, index) => (
+            <Link href={item.href} prefetch={false} key={`${item.id}-${index}`}>
+              <b>New</b>{item.title}<i aria-hidden="true">→</i>
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );
