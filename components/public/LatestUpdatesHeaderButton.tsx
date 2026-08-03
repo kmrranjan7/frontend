@@ -135,7 +135,7 @@ export function LatestUpdatesHeaderButton() {
       </button>
 
       {open ? (
-        <section className="fixed left-2 right-2 top-[54px] z-[120] overflow-hidden rounded-lg border border-blue-100 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.2)] sm:absolute sm:left-auto sm:right-0 sm:top-10 sm:w-[320px]" aria-label="Latest updates">
+        <section className="header-action-popover overflow-hidden rounded-lg border border-blue-100 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.2)]" aria-label="Latest updates">
           <header className="flex items-center justify-between border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white px-2.5 py-1.5">
             <div>
               <strong className="block text-[10px] text-slate-900">Latest Updates</strong>

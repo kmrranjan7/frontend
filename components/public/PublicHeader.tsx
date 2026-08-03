@@ -55,7 +55,7 @@ export function PublicHeader() {
           ))}
           <details className="public-company-menu minimal-more-menu">
             <summary>
-              Menu <Icon name="chevron" size={13} />
+              <span>Menu</span><Icon name="chevron" size={13} />
             </summary>
             <div>
               <span><strong>Explore</strong><small>Useful links and resources</small></span>
