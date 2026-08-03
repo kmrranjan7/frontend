@@ -23,7 +23,7 @@ export const metadata: Metadata = createMetadata({
 });
 export default function Page() {
   return (
-    <div className="content-page shell">
+    <div className="content-page shell image-compressor-page">
       <Breadcrumbs
         items={[
           { name: "Home", path: "/" },

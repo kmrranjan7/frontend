@@ -355,10 +355,13 @@ export default function LatestJobsExplorer({
               <Icon name="spark" size={14} />
             </span>
             <div>
-              <p className="m-0 text-[9px] font-black uppercase tracking-[0.14em] text-cyan-700">Latest Jobs</p>
-              <h2 id="latest-jobs-heading" className="mt-0.5 text-[11px] font-bold tracking-tight text-slate-900 sm:text-[12px]">
-                Discover verified government opportunities and apply with confidence.
-              </h2>
+              <p className="m-0 text-[9px] font-black uppercase tracking-[0.14em] text-cyan-700">Latest opportunities</p>
+              <h1 id="latest-jobs-heading" className="mt-0.5 text-lg font-black tracking-tight text-slate-900 sm:text-xl">
+                Latest Government Jobs
+              </h1>
+              <p className="m-0 mt-0.5 text-[10px] font-medium leading-relaxed text-slate-600 sm:text-[11px]">
+                Find verified recruitment updates, eligibility details, important dates and official application information.
+              </p>
             </div>
           </div>
 
@@ -383,7 +386,7 @@ export default function LatestJobsExplorer({
 
           <label className="inline-flex min-w-0 items-center gap-1.5 rounded-lg border border-emerald-100 bg-white/95 px-2 py-1.5 text-[11px] font-medium text-slate-600 shadow-sm">
             <span className="sr-only">Filter by state</span>
-            <Icon name="trend" size={14} />
+            <Icon name="location" size={14} />
             <select
               name="state"
               value={stateValue}
@@ -430,8 +433,8 @@ export default function LatestJobsExplorer({
         </form>
       </div>
 
-      <div className="mt-4 w-full min-w-0">
-        <div className="overflow-visible pr-0 lg:max-h-[82vh] lg:overflow-y-auto lg:pr-1 lg:[scrollbar-gutter:stable] lg:[scrollbar-color:#0284c7_#e2e8f0]">
+      <div className="mt-2.5 w-full min-w-0 sm:mt-3">
+        <div className="overflow-visible">
           <div className="hidden overflow-x-auto lg:block">
             <table className="min-w-[940px] w-full table-fixed border-separate border-spacing-0 overflow-hidden rounded-xl border border-slate-200 text-left shadow-sm">
               <thead className="bg-gradient-to-r from-indigo-700 via-blue-600 to-cyan-500 text-white">

@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { jsPDF } from "jspdf";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
+import { Icon } from "@/components/ui/Icon";
 
 /** Bundle the matching PDF.js worker instead of relying on a copied public file. */
 if (typeof window !== "undefined") {
@@ -770,15 +771,15 @@ if (outputSrc) URL.revokeObjectURL(outputSrc);
 
 return (
 <main className="w-full bg-white text-slate-900">
-<div className="mx-auto flex w-full flex-col items-center py-2 sm:py-3">
+<div className="mx-auto flex w-full flex-col items-center py-2">
 {/* Card */}
-<div className="mx-auto w-full max-w-[1120px] overflow-hidden rounded-2xl border border-[#2563EB]/20 bg-white/95 shadow-[0_22px_46px_rgba(15,23,42,0.08)]">
+<div className="mx-auto w-full max-w-[1240px] overflow-hidden rounded-2xl border border-[#2563EB]/20 bg-white/95 shadow-[0_22px_46px_rgba(15,23,42,0.08)]">
 <header className="flex flex-col gap-2 border-b border-blue-100 bg-white px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
 <div className="flex items-center gap-2.5">
-<span className="grid size-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-base text-white shadow-[0_8px_18px_rgba(37,99,235,0.25)]" aria-hidden="true">✦</span>
+<span className="grid size-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-[0_8px_18px_rgba(37,99,235,0.25)]" aria-hidden="true"><Icon name="spark" size={19} /></span>
 <div>
-<h1 className="m-0 text-sm font-extrabold tracking-[-0.02em] text-slate-900 sm:text-base">Application Image Preparation</h1>
-<p className="m-0 mt-0.5 text-[10px] font-medium text-slate-500 sm:text-[11px]">Prepare photos, signatures, and PDF pages to meet online application requirements.</p>
+<h1 className="m-0 text-base font-extrabold tracking-[-0.02em] text-slate-900 sm:text-lg">Professional Image Compressor &amp; Converter</h1>
+<p className="m-0 mt-0.5 text-[11px] font-medium leading-relaxed text-slate-500 sm:text-xs">Resize, crop and compress photos, signatures, images and PDF pages for online applications.</p>
 </div>
 </div>
 <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.08em] text-emerald-700">
@@ -816,8 +817,8 @@ className="group relative rounded-xl border-2 border-dashed border-[#2563EB]/35 
 aria-label="Drop files here"
 >
 <div className="pointer-events-none">
-<div className="text-3xl mb-1">⬆️</div>
-<p className="text-sm font-semibold text-slate-800">
+<span className="mx-auto mb-2 grid size-11 place-items-center rounded-full bg-blue-100 text-blue-700"><Icon name="file" size={20} /></span>
+<p className="text-sm font-bold text-slate-800">
 Drag & drop an <b>Image</b> or <b>PDF</b> here
 </p>
 <p className="text-[11px] text-slate-500">or use buttons below</p>
@@ -825,13 +826,13 @@ Drag & drop an <b>Image</b> or <b>PDF</b> here
 </div>
 
 <div className="flex flex-wrap gap-2">
-<label className="cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50/60 hover:text-blue-700">
-📷 Upload Image
+<label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50/60 hover:text-blue-700">
+<Icon name="file" size={14} /> Upload Image
 <input ref={imgInputRef} hidden type="file" accept="image/*" onChange={onImageUpload} /> {/* NEW */}
 </label>
 
-<label className="cursor-pointer rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50/60 hover:text-blue-700">
-📄 Upload PDF
+<label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50/60 hover:text-blue-700">
+<Icon name="book" size={14} /> Upload PDF
 <input ref={pdfInputRef} hidden type="file" accept="application/pdf" onChange={onPDFUpload} /> {/* NEW */}
 </label>
 </div>
@@ -970,7 +971,7 @@ onClick={processImage}
 disabled={busy || !imageSrc}
 className="w-full rounded-xl bg-gradient-to-r from-[#2563EB] to-[#1d4ed8] py-2.5 text-sm font-bold text-white shadow-[0_12px_22px_rgba(37,99,235,0.32)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
 >
-{busy ? "Processing…" : `Resize & Compress (≤${TARGET_KB}KB)`}
+<span className="inline-flex items-center justify-center gap-2"><Icon name="settings" size={16} />{busy ? "Processing…" : `Resize & Compress (≤${TARGET_KB}KB)`}</span>
 </button>
 
 {/* Status */}
@@ -1063,14 +1064,14 @@ onClick={downloadImage}
 disabled={!outputSrc}
 className="rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 py-2 text-sm font-bold text-white shadow-[0_10px_20px_rgba(5,150,105,0.24)] transition hover:brightness-105 disabled:opacity-50"
 >
-⬇ Download Image
+<span className="inline-flex items-center justify-center gap-1.5"><Icon name="file" size={15} /> Download Image</span>
 </button>
 <button
 onClick={downloadPDF}
 disabled={!outputSrc}
 className="rounded-xl bg-gradient-to-r from-slate-800 to-slate-700 py-2 text-sm font-bold text-white shadow-[0_10px_18px_rgba(15,23,42,0.25)] transition hover:brightness-105 disabled:opacity-50"
 >
-📄 Download PDF
+<span className="inline-flex items-center justify-center gap-1.5"><Icon name="book" size={15} /> Download PDF</span>
 </button>
 </div>
 

@@ -5,6 +5,7 @@ import { POST_SEARCH_MAX_LENGTH } from "@/config/search";
 import { fetchPostListings } from "@/lib/api/post-listings";
 import { PublicListingActions } from "@/components/public/PublicListingActions";
 import { PublicPostListing } from "@/components/public/PublicPostListing";
+import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 
 export const metadata: Metadata = createMetadata({
   title: "Latest Government Exam Results",
@@ -59,7 +60,14 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
 
   return (
     <main className="w-full bg-[linear-gradient(180deg,#f8fbff_0%,#ffffff_26rem)] py-2 sm:py-3 lg:py-4">
+      
       <section className="mx-auto w-[min(1240px,96vw)] space-y-2.5 sm:w-[min(1240px,94vw)] sm:space-y-3">
+      <Breadcrumbs
+            items={[
+              { name: "Home", path: "/" },
+              { name: "Result", path: "/results" },
+            ]}
+          />
         <section className="relative overflow-hidden rounded-xl border border-indigo-100 bg-gradient-to-br from-white via-indigo-50/80 to-cyan-50/90 p-3.5 shadow-[0_10px_26px_rgba(15,23,42,0.07)] sm:p-4 lg:p-5">
           <p className="text-[10px] font-black uppercase tracking-[0.14em] text-indigo-700 sm:text-[11px]">Results</p>
           <h1 className="mt-1 text-[22px] font-black leading-tight tracking-tight text-slate-900 sm:text-[26px] lg:text-[30px]">Latest Government Exam Results</h1>

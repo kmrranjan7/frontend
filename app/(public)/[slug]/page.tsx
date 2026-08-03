@@ -147,10 +147,7 @@ export default async function PublicPostPage({ params }: { params: Promise<{ slu
         <Breadcrumbs items={breadcrumbItems} />
         <article className="mt-3 rounded-xl border border-indigo-100 bg-white p-4 shadow-[0_12px_30px_rgba(15,23,42,0.08)] sm:p-6">
           <Link href={category.path} className="text-[11px] font-bold text-indigo-700 underline underline-offset-2">← Back to {category.name}</Link>
-          <p className="mt-4 text-[10px] font-black uppercase tracking-[0.12em] text-indigo-700">{post.postType}</p>
-          <h1 className="mt-1 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">{post.title}</h1>
-          <p className="mt-2 text-xs font-medium text-slate-500">{post.department || "Sarkari Global Result"}{post.stateName ? ` · ${post.stateName}` : ""}</p>
-          <div className="prose prose-slate mt-6 max-w-none text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: post.contentHtml }} />
+          <div className="public-post-content prose prose-slate mt-6 max-w-none text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: post.contentHtml }} />
         </article>
       </div>
       <JsonLd data={articleJsonLd({

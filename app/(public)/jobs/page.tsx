@@ -71,14 +71,6 @@ export default async function JobsPage({
           { name: "Latest Jobs", path: "/jobs" },
         ]}
       />
-      <header className="jobs-listing-heading">
-        <p className="content-label">LATEST OPPORTUNITIES</p>
-        <h1>Latest Government Jobs</h1>
-        <p>
-          Find current recruitment updates, important dates, eligibility details,
-          and official application information in one place.
-        </p>
-      </header>
       <LatestJobsExplorer
         jobs={filteredJobs}
         search={search}
@@ -86,7 +78,7 @@ export default async function JobsPage({
         selectedQualification={selectedQualification}
         basePath="/jobs"
       />
-      <div className="mt-5 sm:mt-6">
+      <div className="mt-3 sm:mt-4">
         <PublicExploreSections />
       </div>
     </div>

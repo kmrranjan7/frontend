@@ -383,7 +383,7 @@ export default function HomeJobsExplorer({
 
           <label className="inline-flex min-w-0 items-center gap-1.5 rounded-lg border border-emerald-100 bg-white/95 px-2 py-1.5 text-[11px] font-medium text-slate-600 shadow-sm">
             <span className="sr-only">Filter by state</span>
-            <Icon name="trend" size={14} />
+            <Icon name="location" size={14} />
             <select
               name="state"
               value={stateValue}

@@ -16,6 +16,7 @@ export type IconName =
   | "heart"
   | "grid"
   | "layers"
+  | "location"
   | "menu"
   | "plus"
   | "search"
@@ -45,6 +46,7 @@ const paths: Record<IconName, React.ReactNode> = {
   heart: <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z" />,
   grid: <><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></>,
   layers: <><path d="m12 3 9 5-9 5-9-5z" /><path d="m3 12 9 5 9-5M3 16l9 5 9-5" /></>,
+  location: <><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></>,
   menu: <><path d="M4 7h16M4 12h16M4 17h16" /></>,
   plus: <><path d="M12 5v14M5 12h14" /></>,
   search: <><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></>,

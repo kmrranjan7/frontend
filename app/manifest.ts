@@ -6,7 +6,9 @@ export default function manifest(): MetadataRoute.Manifest {
     name: siteConfig.name,
     short_name: siteConfig.shortName,
     description: siteConfig.description,
+    id: "/",
     start_url: "/",
+    scope: "/",
     display: "standalone",
     background_color: "#ffffff",
     theme_color: siteConfig.themeColor,
@@ -14,9 +16,22 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ["education", "news", "government"],
     icons: [
       {
-        src: "/favicon.ico",
-        sizes: "16x16 32x32 48x48 64x64 128x128 256x256",
-        type: "image/x-icon",
+        src: "/icons/app-icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icons/app-icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "any",
+      },
+      {
+        src: "/icons/app-icon-maskable-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
       },
     ],
   };

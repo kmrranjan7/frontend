@@ -6,7 +6,9 @@ type LatestNewsResponse = { success?: boolean; data?: { title?: string; link?: s
 
 async function loadLatestNews() {
   try {
-    const response = await fetch(`${env.backendApiUrl}/api/v1/latest-news`, { next: { revalidate: 30 } });
+    const response = await fetch(`${env.backendApiUrl}/api/v1/latest-news`, {
+      cache: "no-store",
+    });
     if (!response.ok) return [];
     const payload = await response.json() as LatestNewsResponse;
     const managed = (payload.data ?? []).flatMap((item) => {
@@ -21,7 +23,7 @@ async function loadLatestNews() {
 
 export async function LatestNewsFlash() {
   const newsItems = await loadLatestNews();
-  if (!newsItems.length) return null;
+
   return (
     <section className="latest-news-flash" aria-label="Latest news">
       <strong>
@@ -30,13 +32,19 @@ export async function LatestNewsFlash() {
         <small><i aria-hidden="true" /> Live</small>
       </strong>
       <div className="latest-news-window">
-        <div className="latest-news-track">
-          {[...newsItems, ...newsItems].map((item, index) => (
-            <Link href={item.href} prefetch={false} key={`${item.href}-${index}`}>
-              <span>New</span>{item.label}<i aria-hidden="true">→</i>
-            </Link>
-          ))}
-        </div>
+        {newsItems.length ? (
+          <div className="latest-news-track">
+            {[...newsItems, ...newsItems].map((item, index) => (
+              <Link href={item.href} prefetch={false} key={`${item.href}-${index}`}>
+                <span>New</span>{item.label}<i aria-hidden="true">→</i>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <p className="latest-news-empty" role="status">
+            Latest updates will appear here shortly.
+          </p>
+        )}
       </div>
     </section>
   );
