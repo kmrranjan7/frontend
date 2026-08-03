@@ -789,16 +789,37 @@ export default function NewContentPage() {
                       ".sarkari-template-block { border: 1px solid #dbeafe; background: #ffffff; border-radius: 12px; padding: 14px; box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06); } " +
                       ".sarkari-template-block h2 { margin: 0 0 10px; font-size: 1.35rem; line-height: 1.35; color: #0f172a; background: linear-gradient(90deg, #e0f2fe, #dbeafe); border: 1px solid #bfdbfe; border-radius: 10px; padding: 8px 10px; } " +
                       ".sarkari-template-block h3 { margin: 14px 0 8px; font-size: 1.05rem; color: #1e3a8a; border-left: 4px solid #2563eb; padding-left: 8px; } " +
+                      ".sarkari-template-block > h3:not(:last-of-type):not(:has(img)) { padding: 9px 11px; margin: 22px 0 10px; border-left: 4px solid #2563eb; border-radius: 7px 7px 0 0; color: #1e3a8a; font-size: 17px; font-weight: bold; } " +
+                      ".sarkari-template-block > h3:has(img) { padding-left: 0; border-left: 0; } " +
+                      ".sarkari-template-block > h3:last-of-type { padding: 0 0 8px; margin: 22px 0 8px; border-left: 0; border-bottom: 2px solid #2563eb; color: #1e3a8a; font-size: 17px; } " +
                       ".sarkari-template-block h4 { margin: 12px 0 6px; font-size: 0.98rem; color: #1e40af; } " +
                       ".sarkari-template-block p { margin: 0 0 10px; } " +
                       ".sarkari-template-block ul, .sarkari-template-block ol { margin: 0 0 10px 22px; padding: 0; } " +
+                      ".sarkari-template-block ul { list-style: disc; } " +
+                      ".sarkari-template-block ol { list-style: decimal; } " +
+                      ".sarkari-template-block ul li::marker, .sarkari-template-block ol li::marker { color: #2563eb; font-weight: 800; } " +
                       ".sarkari-template-block li { margin: 0 0 6px; } " +
                       ".sarkari-template-block strong { color: #111827; } " +
                       ".sarkari-template-block a { color: #1d4ed8; text-decoration: underline; font-weight: 600; } " +
-                      ".sarkari-template-block table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; background: #ffffff; } " +
-                      ".sarkari-template-block th, .sarkari-template-block td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; vertical-align: top; } " +
-                      ".sarkari-template-block th { background: #1e3a8a; color: #ffffff; font-weight: 700; } " +
-                      ".sarkari-template-block tr:nth-child(even) td { background: #f8fafc; } " +
+                      ".sarkari-template-block table a { display: inline-flex; min-height: 28px; align-items: center; justify-content: center; padding: 4px 10px; border-radius: 6px; background: #dbeafe; color: #1d4ed8; font-weight: 800; text-decoration: none; white-space: nowrap; } " +
+                      ".sarkari-template-block table a:hover { background: #bfdbfe; } " +
+                      ".sarkari-template-block table a[href*='whatsapp.com'] { background: #dcfce7; color: #15803d; } " +
+                      ".sarkari-template-block table a[href*='whatsapp.com']:hover { background: #bbf7d0; color: #166534; } " +
+                      ".sarkari-template-block table a[href*='t.me'] { background: #e0f2fe; color: #0369a1; } " +
+                      ".sarkari-template-block table a[href*='t.me']:hover { background: #bae6fd; color: #075985; } " +
+                      ".sarkari-template-block table a[href$='.pdf'], .sarkari-template-block table a[href*='.pdf?'] { background: #fee2e2; color: #b91c1c; } " +
+                      ".sarkari-template-block table a[href$='.pdf']:hover, .sarkari-template-block table a[href*='.pdf?']:hover { background: #fecaca; color: #991b1b; } " +
+                      ".sarkari-template-block table a[href*='sarkariresultportal.com'] { background: #f3e8ff; color: #7e22ce; } " +
+                      ".sarkari-template-block table a[href*='sarkariresultportal.com']:hover { background: #e9d5ff; color: #6b21a8; } " +
+                      ".sarkari-template-block table a[href*='bpssc.bihar.gov.in']:not([href*='.pdf']) { background: #e0e7ff; color: #3730a3; } " +
+                      ".sarkari-template-block table a[href*='bpssc.bihar.gov.in']:not([href*='.pdf']):hover { background: #c7d2fe; color: #312e81; } " +
+                      ".sarkari-template-block table { width: 100%; overflow: hidden; margin: 12px 0 20px; border: 1px solid #cbd5e1; border-radius: 10px; border-collapse: separate; border-spacing: 0; background: #ffffff; box-shadow: 0 7px 20px rgba(15, 23, 42, 0.06); font-size: 13px; line-height: 1.55; } " +
+                      ".sarkari-template-block table caption { padding: 9px 12px; color: #1e3a8a; font-size: 14px; font-weight: 800; text-align: left; } " +
+                      ".sarkari-template-block th, .sarkari-template-block td { min-width: 110px; padding: 11px 13px; border: 0; border-right: 1px solid #dbe3ee; border-bottom: 1px solid #dbe3ee; text-align: left; vertical-align: top; overflow-wrap: anywhere; } " +
+                      ".sarkari-template-block th { background: #1e3a8a; color: #ffffff; font-size: 12px; font-weight: 800; letter-spacing: 0.01em; } " +
+                      ".sarkari-template-block tr:nth-child(even) td { background: #f8fbff; } " +
+                      ".sarkari-template-block tr:last-child td { border-bottom: 0; } " +
+                      ".sarkari-template-block th:last-child, .sarkari-template-block td:last-child { border-right: 0; } " +
                       ".sarkari-template-block h3:last-of-type + ul { margin: 8px 0 18px; padding: 0; list-style: none; counter-reset: faq; } " +
                       ".sarkari-template-block h3:last-of-type + ul li { position: relative; margin: 0; padding: 13px 0 13px 42px; border-bottom: 1px solid #dbeafe; counter-increment: faq; } " +
                       ".sarkari-template-block h3:last-of-type + ul li::before { content: counter(faq, decimal-leading-zero); position: absolute; top: 14px; left: 0; color: #2563eb; font-size: 12px; font-weight: 800; } " +
