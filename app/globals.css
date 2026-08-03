@@ -139,17 +139,17 @@ button { cursor: pointer; }
 .latest-news-window::before, .latest-news-window::after { width: 22px; position: absolute; top: 0; bottom: 0; z-index: 1; pointer-events: none; content: ""; }
 .latest-news-window::before { left: 0; background: linear-gradient(90deg, #fff, transparent); }
 .latest-news-window::after { right: 0; background: linear-gradient(270deg, #fff, transparent); }
-.latest-news-track { width: max-content; height: 100%; display: flex; align-items: center; animation: latest-news-scroll 40s linear infinite; }
+.latest-news-track { width: max-content; height: 100%; display: flex; flex: 0 0 auto; align-items: center; will-change: transform; transform: translate3d(0, 0, 0); -webkit-animation: latest-news-scroll 40s linear infinite; animation: latest-news-scroll 40s linear infinite; }
 .latest-news-track:hover { animation-play-state: paused; }
 .latest-news-track a { display: inline-flex; align-items: center; gap: 9px; padding-left: 32px; color: #475569; font-size: 10px; font-weight: 700; white-space: nowrap; }
 .latest-news-track a > span { padding: 3px 6px; border: 1px solid #dbeafe; border-radius: 4px; background: #f8fbff; color: #2563eb; font-size: 6px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
 .latest-news-track a:hover { color: #1d4ed8; }
 .latest-news-track a > i { margin-left: 8px; color: #60a5fa; font-size: 12px; font-style: normal; }
-@keyframes latest-news-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes latest-news-scroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
 @keyframes latest-news-dot { 0% { box-shadow: 0 0 0 0 rgb(134 239 172 / 70%); } 70%, 100% { box-shadow: 0 0 0 5px rgb(134 239 172 / 0%); } }
 @media (prefers-reduced-motion: reduce) {
-  .latest-news-track, .latest-news-flash > strong small i { animation: none; }
-  .latest-news-window { overflow-x: auto; }
+  .latest-news-track { -webkit-animation: latest-news-scroll 70s linear infinite; animation: latest-news-scroll 70s linear infinite; }
+  .latest-news-flash > strong small i { animation: none; }
 }
 .minimal-primary-nav { display: flex; align-items: center; gap: 3px; margin-left: auto; margin-right: 72px; }
 .minimal-header-actions { display: flex; align-items: center; gap: 8px; position: absolute; top: 50%; right: 16px; transform: translateY(-50%); }
