@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { SocialMediaLinks } from "@/components/public/SocialMediaLinks";
 
 const backendOrigin = process.env.NEXT_PUBLIC_BACKEND_API_URL?.replace(/\/$/, "");
 function getStringField(formData: FormData, key: string): string {
@@ -235,55 +236,8 @@ export default function ContactForm() {
             <div className="my-5 border-t border-slate-200" />
 
             <p className="text-sm font-semibold text-slate-800">Follow Us</p>
-            <div className="mt-3 flex items-center gap-3">
-              <a
-                href="https://wa.me/7904736929"
-                aria-label="Follow on WhatsApp"
-                target="_blank"
-                rel="noreferrer"
-                className="group relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 transition hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
-              >
-                <span className="text-sm font-bold">W</span>
-                <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 rounded-md bg-slate-900 px-2 py-1 text-[11px] font-semibold text-white opacity-0 shadow-sm transition group-hover:opacity-100 group-focus-visible:opacity-100">
-                  WhatsApp
-                </span>
-              </a>
-              <a
-                href="https://facebook.com/sarkariglobalresult"
-                aria-label="Follow on Facebook"
-                target="_blank"
-                rel="noreferrer"
-                className="group relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-blue-50 text-blue-700 transition hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-200"
-              >
-                <span className="text-sm font-bold">f</span>
-                <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 rounded-md bg-slate-900 px-2 py-1 text-[11px] font-semibold text-white opacity-0 shadow-sm transition group-hover:opacity-100 group-focus-visible:opacity-100">
-                  Facebook
-                </span>
-              </a>
-              <a
-                href="https://instagram.com/sarkariglobalresult"
-                aria-label="Follow on Instagram"
-                target="_blank"
-                rel="noreferrer"
-                className="group relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-700 transition hover:bg-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300"
-              >
-                <span className="text-sm font-bold">i</span>
-                <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 rounded-md bg-slate-900 px-2 py-1 text-[11px] font-semibold text-white opacity-0 shadow-sm transition group-hover:opacity-100 group-focus-visible:opacity-100">
-                  Instagram
-                </span>
-              </a>
-              <a
-                href="https://youtube.com/@sarkariglobalresult"
-                aria-label="Follow on YouTube"
-                target="_blank"
-                rel="noreferrer"
-                className="group relative inline-flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-red-600 transition hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-200"
-              >
-                <span className="text-sm font-bold">Y</span>
-                <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 rounded-md bg-slate-900 px-2 py-1 text-[11px] font-semibold text-white opacity-0 shadow-sm transition group-hover:opacity-100 group-focus-visible:opacity-100">
-                  YouTube
-                </span>
-              </a>
+            <div className="mt-3">
+              <SocialMediaLinks />
             </div>
           </div>
         </aside>

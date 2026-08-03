@@ -129,13 +129,16 @@ export type ArticleInput = {
 export function articleJsonLd(article: ArticleInput) {
   return {
     "@context": "https://schema.org",
-    "@type": "NewsArticle",
+    "@type": "Article",
     headline: article.title,
     description: article.description,
     image: [absoluteUrl(article.image ?? "/opengraph-image")],
     datePublished: article.datePublished,
     dateModified: article.dateModified,
-    mainEntityOfPage: absoluteUrl(`/news/${article.slug}`),
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": absoluteUrl(`/${article.slug}`),
+    },
     author: { "@type": "Organization", name: article.author },
     publisher: { "@id": absoluteUrl("/#organization") },
   };

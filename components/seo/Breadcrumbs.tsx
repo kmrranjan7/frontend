@@ -13,7 +13,7 @@ export function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
           {items.map((item, index) => {
             const current = index === items.length - 1;
             return (
-              <li key={item.path}>
+              <li key={`${item.path}-${index}`}>
                 {index > 0 && <span className="breadcrumb-separator" aria-hidden="true">›</span>}
                 {current ? (
                   <span aria-current="page">{item.name}</span>

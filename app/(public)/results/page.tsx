@@ -10,6 +10,14 @@ export const metadata: Metadata = createMetadata({
   title: "Latest Government Exam Results",
   description: "Find government exam results, scorecards, merit lists, and selection updates across India.",
   path: "/results",
+  keywords: [
+    "latest government exam results online",
+    "sarkari result merit list download",
+    "government recruitment final result",
+    "competitive exam scorecard and cutoff marks",
+    "government exam selection list PDF",
+    "SSC railway bank exam results",
+  ],
 });
 
 const categoryLinks = [

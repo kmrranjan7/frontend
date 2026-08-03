@@ -9,7 +9,7 @@ export const siteConfig = {
   locale: "en_IN",
   language: "en-IN",
   themeColor: "#7c1d1d",
-  email: "support@sarkariglobalresult.com",
+  email: "sarkariglobalresult@gmail.com",
   publisher: "Sarkari Global Result",
 } as const;
 

@@ -21,6 +21,11 @@ export const metadata: Metadata = createMetadata({
     "sarkari jobs",
     "government recruitment",
     "online job forms",
+    "latest government job notifications in India",
+    "government jobs for 10th and 12th pass",
+    "graduate government jobs apply online",
+    "central and state government vacancies",
+    "upcoming sarkari naukri online form",
   ],
 });
 

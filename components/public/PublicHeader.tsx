@@ -8,8 +8,8 @@ import { LatestUpdatesHeaderButton } from "@/components/public/LatestUpdatesHead
 import { HeaderPopoverCoordinator } from "@/components/public/HeaderPopoverCoordinator";
 
 export function PublicHeader() {
-  const primaryNavigation = publicNavigation.slice(0, 5);
-  const browseNavigation = publicNavigation.slice(5);
+  const primaryNavigation = publicNavigation.slice(0, 6);
+  const browseNavigation = publicNavigation.slice(6);
 
   return (
     <header className="public-header minimal-public-header">
