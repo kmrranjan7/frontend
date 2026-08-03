@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import HomeJobsExplorer from "@/components/public/home/HomeJobsExplorer";
 import HomeLeftSidebar from "@/components/public/home/HomeLeftSidebar";
 import HomeRightSidebar from "@/components/public/home/HomeRightSidebar";
+import { PublicExploreSections } from "@/components/public/PublicExploreSections";
 import { POST_SEARCH_MAX_LENGTH } from "@/config/search";
-import { jobs as fallbackJobs } from "@/data/content";
 import { JOBS_BATCH_SIZE } from "@/lib/api/client-post-listings";
 import {
   fetchPostListings,
@@ -58,18 +58,7 @@ export default async function HomePage({
   ]);
   const latestUpdates = otherPosts;
 
-  const jobs: readonly PostListingItem[] = jobPosts.length ? jobPosts : fallbackJobs.map((job, index) => ({
-    id: `fallback-${index}`,
-    title: job.title,
-    slug: job.slug,
-    startDate: job.datePosted,
-    lastDate: job.validThrough.slice(0, 10),
-    status: "PUBLISHED",
-    state: job.region,
-    vacancies: job.vacancies,
-    department: job.organization,
-    qualification: job.qualification,
-  }));
+  const jobs: readonly PostListingItem[] = jobPosts;
   const filteredJobs = jobs.filter((job) => (
     (!selectedState || job.state === selectedState)
     && (!selectedQualification || job.qualification === selectedQualification)
@@ -89,6 +78,9 @@ export default async function HomePage({
         </div>
 
         <HomeRightSidebar admitCards={admitPosts} results={resultPosts} />
+      </div>
+      <div className="shell mt-5 sm:mt-6">
+        <PublicExploreSections />
       </div>
     </div>
   );

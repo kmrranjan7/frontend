@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   authors: [{ name: siteConfig.publisher, url: siteConfig.url }],
   creator: siteConfig.publisher,
   publisher: siteConfig.publisher,
-  category: "Government jobs and education",
+  category: "Government Jobs, Sarkari Global Results, Exams and Education",
   referrer: "origin-when-cross-origin",
   formatDetection: {
     email: false,

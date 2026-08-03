@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { PublicExploreSections } from "@/components/public/PublicExploreSections";
 import { POST_SEARCH_MAX_LENGTH } from "@/config/search";
-import { jobs as fallbackJobs } from "@/data/content";
 import { JOBS_BATCH_SIZE } from "@/lib/api/client-post-listings";
 import {
   fetchPostListings,
@@ -57,20 +56,7 @@ export default async function JobsPage({
   const selectedState = query.state?.trim() ?? "";
   const selectedQualification = query.qualification?.trim() ?? "";
   const liveJobs = await loadJobs(search);
-  const jobs: readonly PostListingItem[] = liveJobs.length
-    ? liveJobs
-    : fallbackJobs.map((job, index) => ({
-        id: `fallback-${index}`,
-        title: job.title,
-        slug: job.slug,
-        startDate: job.datePosted,
-        lastDate: job.validThrough.slice(0, 10),
-        status: "PUBLISHED",
-        state: job.region,
-        vacancies: job.vacancies,
-        department: job.organization,
-        qualification: job.qualification,
-      }));
+  const jobs: readonly PostListingItem[] = liveJobs;
   const filteredJobs = jobs.filter(
     (job) =>
       (!selectedState || job.state === selectedState) &&

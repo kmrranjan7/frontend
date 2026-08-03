@@ -2,14 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import logoImage from "@/app/logo.png";
 import { publicNavigation } from "@/config/navigation";
-import { Icon } from "@/components/ui/Icon";
 import { SavedJobsHeaderButton } from "@/components/public/SavedJobsHeaderButton";
 import { LatestUpdatesHeaderButton } from "@/components/public/LatestUpdatesHeaderButton";
 import { HeaderPopoverCoordinator } from "@/components/public/HeaderPopoverCoordinator";
 
 export function PublicHeader() {
   const primaryNavigation = publicNavigation.slice(0, 6);
-  const browseNavigation = publicNavigation.slice(6);
 
   return (
     <header className="public-header minimal-public-header">
@@ -35,30 +33,6 @@ export function PublicHeader() {
               {item.label}
             </Link>
           ))}
-          <details className="browse-menu">
-            <summary>
-              Menu
-              <Icon name="chevron" size={13} />
-            </summary>
-            <div className="browse-menu-panel">
-              <div className="browse-menu-heading">
-                <span>EXPLORE SARKARI GLOBAL RESULT</span>
-                <strong>Find the update you need</strong>
-                <small>Jobs, examinations, tools, and important information in one place.</small>
-              </div>
-              <div className="browse-menu-links">
-                {browseNavigation.map((item) => (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    prefetch={false}
-                  >
-                    <span>{item.label}</span><i>→</i>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </details>
         </nav>
         <div className="minimal-header-actions">
           <LatestUpdatesHeaderButton />
