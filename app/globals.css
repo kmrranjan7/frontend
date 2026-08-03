@@ -531,6 +531,39 @@ button { cursor: pointer; }
 .panel-heading p { margin: 5px 0 0; color: #96919c; font-size: 9px; }
 .panel-heading button { display: flex; align-items: center; gap: 5px; border: 0; background: transparent; color: var(--lavender); font-size: 9px; font-weight: 700; }
 .panel-heading select { padding: 6px 9px; border: 1px solid #e5e2e8; border-radius: 5px; background: #fff; color: #6e6974; font-size: 8px; }
+.image-manager { padding: 24px; }
+.image-manager-heading, .image-manager-toolbar, .image-url-row, .image-card-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.dashboard-eyebrow { color: #2563eb; font-size: 9px; font-weight: 800; letter-spacing: .12em; }
+.image-manager-heading h1 { margin: 5px 0 4px; font-size: 22px; }
+.image-manager-heading p { margin: 0; color: #64748b; font-size: 12px; }
+.image-upload-button { cursor: pointer; }
+.image-upload-button input { display: none; }
+.image-manager-toolbar { margin: 22px 0 16px; padding-top: 16px; border-top: 1px solid #e2e8f0; }
+.image-tabs { display: inline-flex; gap: 4px; padding: 4px; border: 1px solid #dbe7f5; border-radius: 9px; background: #f8fbff; }
+.image-tabs button, .image-refresh { padding: 7px 11px; border: 0; border-radius: 6px; background: transparent; color: #64748b; cursor: pointer; font-size: 11px; font-weight: 700; }
+.image-tabs button.active { background: #2563eb; color: #fff; box-shadow: 0 4px 10px rgb(37 99 235 / 20%); }
+.image-refresh { border: 1px solid #dbe7f5; background: #fff; color: #2563eb; }
+.image-message, .image-manager-empty { padding: 14px; border-radius: 8px; font-size: 12px; }
+.image-message.error { border: 1px solid #fecaca; background: #fff1f2; color: #be123c; }
+.image-message.success { border: 1px solid #a7f3d0; background: #ecfdf5; color: #047857; }
+.image-message.warning { border: 1px solid #fde68a; background: #fffbeb; color: #a16207; }
+.image-manager-empty { border: 1px dashed #cbd5e1; background: #f8fafc; color: #64748b; text-align: center; }
+.image-manager-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.image-card { min-width: 0; padding: 10px; border: 1px solid #dbe7f5; border-radius: 10px; background: #fff; box-shadow: 0 7px 20px rgb(30 64 175 / 5%); }
+.image-card > img { width: 100%; height: 150px; display: block; border-radius: 7px; background: #f1f5f9; object-fit: cover; }
+.image-card > strong { display: block; margin: 9px 0 7px; overflow: hidden; color: #334155; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.image-url-row input { min-width: 0; height: 31px; flex: 1; padding: 0 8px; border: 1px solid #dbe7f5; border-radius: 6px; background: #f8fafc; color: #64748b; font-size: 9px; }
+.image-url-row button, .image-card-actions button, .image-card-actions a { padding: 7px 9px; border: 1px solid #bfdbfe; border-radius: 6px; background: #eff6ff; color: #1d4ed8; cursor: pointer; font-size: 9px; font-weight: 750; }
+.image-references { margin-top: 9px; padding: 9px; border: 1px solid #e2e8f0; border-radius: 7px; background: #f8fafc; }
+.image-references b { color: #334155; font-size: 10px; }
+.image-references ul { max-height: 110px; margin: 7px 0 0; padding: 0; overflow-y: auto; list-style: none; }
+.image-references li + li { margin-top: 5px; }
+.image-references a { display: block; padding: 5px 6px; border-radius: 5px; color: #334155; font-size: 10px; }
+.image-references a:hover { background: #fff; color: #1d4ed8; }
+.image-references a span, .image-references a small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.image-references a small { margin-top: 2px; color: #94a3b8; font-size: 8px; }
+.image-card-actions { justify-content: flex-end; margin-top: 9px; }
+.image-card-actions button { border-color: #fecdd3; background: #fff1f2; color: #be123c; }
 .chart-wrap { height: 200px; display: flex; gap: 10px; margin-top: 20px; }
 .chart-labels { display: flex; flex-direction: column; justify-content: space-between; padding-bottom: 5px; color: #aaa5af; font-size: 7px; }
 .chart { flex: 1; position: relative; overflow: hidden; border-bottom: 1px solid #ece9ef; background: repeating-linear-gradient(to bottom, transparent 0, transparent 48px, #eeecf1 49px); }
@@ -716,10 +749,6 @@ button { cursor: pointer; }
 .sarkari-template-block table a[href*="sarkariresultportal.com"]:hover { background: #e9d5ff; color: #6b21a8; }
 .sarkari-template-block table a[href*="bpssc.bihar.gov.in"]:not([href*=".pdf"]) { background: #e0e7ff; color: #3730a3; }
 .sarkari-template-block table a[href*="bpssc.bihar.gov.in"]:not([href*=".pdf"]):hover { background: #c7d2fe; color: #312e81; }
-@media (max-width: 760px) {
-  .sarkari-template-block table { display: block; max-width: 100%; overflow-x: auto; border-radius: 8px; font-size: 12px; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
-  .sarkari-template-block table th, .sarkari-template-block table td { min-width: 125px; padding: 9px 10px; overflow-wrap: normal; white-space: normal; }
-}
 .sarkari-template-block ul, .sarkari-template-block ol { padding-left: 24px; }
 .sarkari-template-block ul { list-style: disc; }
 .sarkari-template-block ol { list-style: decimal; }
@@ -959,6 +988,7 @@ button { cursor: pointer; }
   .template-picker select { min-width: 0; width: 100%; }
   .user-form-grid { grid-template-columns: 1fr; }
   .user-form-grid label.wide { grid-column: auto; }
+  .image-manager-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 480px) {
@@ -982,6 +1012,12 @@ button { cursor: pointer; }
   .dashboard-header .button svg { flex: none; }
   .dashboard-sidebar { width: 60px; }
   .dashboard-content { padding-inline: 12px; }
+  .image-manager { padding: 15px; }
+  .image-manager-heading { align-items: flex-start; flex-direction: column; }
+  .image-manager-heading .button { width: 100%; }
+  .image-manager-toolbar { align-items: stretch; flex-direction: column; }
+  .image-tabs, .image-tabs button { flex: 1; }
+  .image-manager-grid { grid-template-columns: 1fr; }
 }
 
 @media (min-width: 761px) and (max-width: 1000px) {
