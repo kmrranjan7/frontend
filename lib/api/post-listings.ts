@@ -18,6 +18,7 @@ export type PostListingItem = Readonly<{
   id: string;
   title: string;
   slug: string;
+  postType?: string | null;
   createdAt?: string | null;
   imageUrl?: string | null;
   startDate: string | null;
