@@ -4,7 +4,7 @@
   readonly html: string;
 }>;
 
-export const dashboardPostTemplates: readonly DashboardPostTemplate[] = [
+const rawDashboardPostTemplates: readonly DashboardPostTemplate[] = [
   {
     id: "job-announcement",
     label: "Job",
@@ -42,3 +42,21 @@ export const dashboardPostTemplates: readonly DashboardPostTemplate[] = [
   },
 ] as const;
 
+function modernizeTemplateHtml(html: string): string {
+  const withoutDuplicateTitle = html.replace(/^\s*<h2\b[^>]*>[\s\S]*?<\/h2>/i, "");
+
+  return withoutDuplicateTitle.replace(/<table\b[^>]*>[\s\S]*?<\/table>/i, (table) => {
+    const rows = [...table.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)];
+    const summaryRow = rows.find((row) => /short\s+information/i.test(row[1].replace(/<[^>]+>/g, " ")));
+    if (!summaryRow) return table;
+
+    const cells = [...summaryRow[1].matchAll(/<t[dh]\b[^>]*>([\s\S]*?)<\/t[dh]>/gi)];
+    if (cells.length < 2) return table;
+
+    return `<section class="post-recruitment-overview" aria-labelledby="recruitment-overview-heading"><h2 id="recruitment-overview-heading">Recruitment overview</h2><div>${cells[1][1]}</div></section>`;
+  });
+}
+
+export const dashboardPostTemplates: readonly DashboardPostTemplate[] = rawDashboardPostTemplates.map(
+  (template) => ({ ...template, html: modernizeTemplateHtml(template.html) }),
+);

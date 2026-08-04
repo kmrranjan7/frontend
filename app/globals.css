@@ -430,6 +430,13 @@ button { cursor: pointer; }
 .public-post-content [bgcolor="yellow" i],
 .public-post-content [bgcolor="#ffff00" i] { background: transparent !important; background-color: transparent !important; }
 .public-post-content a[href] { position: relative; z-index: 2; pointer-events: auto !important; cursor: pointer; touch-action: manipulation; }
+.post-recruitment-overview { padding: 18px 20px; margin: 0 0 22px; border: 1px solid #bfdbfe; border-left: 5px solid #2563eb; border-radius: 10px; background: linear-gradient(135deg, #eff6ff, #fff); box-shadow: 0 8px 22px rgb(30 64 175 / 7%); }
+.post-recruitment-overview h2 { margin: 0 0 9px; color: #1e3a8a; font-size: 18px; font-weight: 800; line-height: 1.35; }
+.post-recruitment-overview div { color: #334155; font-size: 14px; line-height: 1.75; }
+.post-recruitment-overview div > :first-child { margin-top: 0; }
+.post-recruitment-overview div > :last-child { margin-bottom: 0; }
+.post-content-image { margin: 18px 0; text-align: center; }
+.post-content-image img { width: auto; max-width: 100%; height: auto; display: inline-block; border-radius: 8px; }
 .faq-list { max-width: 800px; }
 .site-search { max-width: 720px; margin-bottom: 40px; }
 .site-search label { display: block; margin-bottom: 8px; font-size: 12px; font-weight: 700; }

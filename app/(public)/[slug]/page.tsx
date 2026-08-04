@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { env } from "@/config/env";
@@ -38,8 +39,43 @@ function plainText(html: string): string {
     .trim();
 }
 
-function openPostLinksInNewTab(html: string): string {
-  return html.replace(/<a\b([^>]*)>/gi, (_tag, rawAttributes: string) => {
+function escapeHtmlAttribute(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function redesignPostIntro(html: string, title: string): string {
+  const normalizedTitle = plainText(title).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  let redesigned = html.replace(/<h2\b[^>]*>([\s\S]*?)<\/h2>/i, (heading, headingContent: string) => {
+    const normalizedHeading = plainText(headingContent).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    return normalizedHeading.startsWith(normalizedTitle) ? "" : heading;
+  });
+
+  redesigned = redesigned.replace(/<table\b[^>]*>[\s\S]*?<\/table>/i, (table) => {
+    const rows = [...table.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)];
+    const summaryRow = rows.find((row) => /short\s+information/i.test(plainText(row[1])));
+    if (!summaryRow || !rows.some((row) => /name\s+of\s+post/i.test(plainText(row[1])))) return table;
+
+    const cells = [...summaryRow[1].matchAll(/<t[dh]\b[^>]*>([\s\S]*?)<\/t[dh]>/gi)];
+    if (cells.length < 2) return table;
+
+    return `<section class="post-recruitment-overview" aria-labelledby="recruitment-overview-heading"><h2 id="recruitment-overview-heading">Recruitment overview</h2><div>${cells[1][1]}</div></section>`;
+  });
+
+  redesigned = redesigned.replace(
+    /<h[1-6]\b[^>]*>\s*(<img\b[^>]*>)\s*<\/h[1-6]>/gi,
+    '<figure class="post-content-image">$1</figure>',
+  );
+
+  return redesigned;
+}
+
+function enhancePostHtml(html: string, imageAlt: string): string {
+  const redesignedHtml = redesignPostIntro(html, imageAlt);
+  const linksEnhanced = redesignedHtml.replace(/<a\b([^>]*)>/gi, (_tag, rawAttributes: string) => {
     let attributes = rawAttributes;
     const targetPattern = /\btarget\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/i;
 
@@ -60,12 +96,44 @@ function openPostLinksInNewTab(html: string): string {
 
     return `<a${attributes}>`;
   });
+
+  return linksEnhanced.replace(/<img\b([^>]*)>/gi, (_tag, rawAttributes: string) => {
+    let attributes = rawAttributes.replace(
+      /\bsrc\s*=\s*(["'])\.\.\/(?:\.\.\/)*uploads\//i,
+      "src=$1/uploads/",
+    );
+
+    if (!/\balt\s*=/i.test(attributes)) {
+      attributes += ` alt="${escapeHtmlAttribute(imageAlt)}"`;
+    }
+    if (!/\bloading\s*=/i.test(attributes)) attributes += ' loading="lazy"';
+    if (!/\bdecoding\s*=/i.test(attributes)) attributes += ' decoding="async"';
+
+    return `<img${attributes}>`;
+  });
 }
 
 function fallbackDescription(post: PublicPost): string {
   const summary = plainText(post.contentHtml);
   if (!summary) return `Latest ${post.title} notification, important dates, eligibility and application details.`;
   return summary.length <= 160 ? summary : `${summary.slice(0, 157).trimEnd()}...`;
+}
+
+function seoDescription(post: PublicPost): string {
+  const description = (post.seoDescription?.trim() || fallbackDescription(post))
+    .replace(/\s+/g, " ");
+  if (description.length < 160 || /[.!?]$/.test(description)) return description;
+
+  const completeSentenceEnd = Math.max(
+    description.lastIndexOf("."),
+    description.lastIndexOf("!"),
+    description.lastIndexOf("?"),
+  );
+  if (completeSentenceEnd >= 100) return description.slice(0, completeSentenceEnd + 1);
+
+  const shortened = description.slice(0, 157);
+  const lastSpace = shortened.lastIndexOf(" ");
+  return `${shortened.slice(0, lastSpace > 100 ? lastSpace : 157).trimEnd()}...`;
 }
 
 function firstImageUrl(value?: string | null): string | undefined {
@@ -115,13 +183,27 @@ function longTailKeywords(post: PublicPost): string[] {
   return [...new Set(phrases.filter((phrase): phrase is string => Boolean(phrase)))];
 }
 
-async function getPost(slug: string): Promise<PublicPost | null> {
+const getPost = cache(async (slug: string): Promise<PublicPost | null> => {
   const response = await fetch(`${env.backendApiUrl}/api/v1/jobs/slug/${encodeURIComponent(slug)}`, {
     next: { revalidate: 300 },
   });
   if (!response.ok) return null;
   const payload = await response.json() as { success?: boolean; data?: PublicPost };
   return payload.success && payload.data ? payload.data : null;
+});
+
+function validDate(value?: string | null): string | undefined {
+  if (!value) return undefined;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+}
+
+function displayDate(value: string): string {
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(value));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -135,14 +217,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   const image = firstImageUrl(post.imageUrls);
+  const publishedTime = validDate(post.createdAt);
+  const modifiedTime = validDate(post.updatedAt);
   return createMetadata({
     title: post.seoTitle?.trim() || post.title,
-    description: post.seoDescription?.trim() || fallbackDescription(post),
+    description: seoDescription(post),
     path: `/${encodeURIComponent(post.slug)}`,
     ...(image ? { image } : {}),
     type: "article",
-    ...(post.createdAt ? { publishedTime: post.createdAt } : {}),
-    ...(post.updatedAt ? { modifiedTime: post.updatedAt } : {}),
+    ...(publishedTime ? { publishedTime } : {}),
+    ...(modifiedTime ? { modifiedTime } : {}),
     authors: [post.organization?.trim() || post.department?.trim() || "Sarkari Global Result"],
     keywords: longTailKeywords(post),
   });
@@ -152,12 +236,11 @@ export default async function PublicPostPage({ params }: { params: Promise<{ slu
   const post = await getPost((await params).slug);
   if (!post) notFound();
 
-  const contentHtml = openPostLinksInNewTab(post.contentHtml);
-  const title = post.seoTitle?.trim() || post.title;
-  const description = post.seoDescription?.trim() || fallbackDescription(post);
+  const contentHtml = enhancePostHtml(post.contentHtml, post.title);
+  const description = seoDescription(post);
   const category = categoryForPostType(post.postType);
-  const publishedTime = post.createdAt || post.updatedAt || new Date().toISOString();
-  const modifiedTime = post.updatedAt || publishedTime;
+  const publishedTime = validDate(post.createdAt) || validDate(post.updatedAt) || new Date().toISOString();
+  const modifiedTime = validDate(post.updatedAt) || publishedTime;
   const author = post.organization?.trim() || post.department?.trim() || "Sarkari Global Result";
   const image = firstImageUrl(post.imageUrls);
   const breadcrumbItems = [
@@ -172,11 +255,26 @@ export default async function PublicPostPage({ params }: { params: Promise<{ slu
         <Breadcrumbs items={breadcrumbItems} />
         <article className="mt-3 rounded-xl border border-indigo-100 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
           <Link href={category.path} className="text-[11px] font-bold text-indigo-700 underline underline-offset-2">← Back to {category.name}</Link>
+          <header className="mt-5 border-b border-indigo-100 pb-5">
+            <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.12em] text-indigo-700">{category.name}</p>
+            <h1 className="m-0 text-3xl font-extrabold leading-tight tracking-[-0.025em] text-slate-950">{post.title}</h1>
+            <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-600">
+              <span>Published by <strong className="font-bold text-slate-800">{author}</strong></span>
+              <span aria-hidden="true">•</span>
+              <time dateTime={publishedTime}>Published {displayDate(publishedTime)}</time>
+              {displayDate(modifiedTime) !== displayDate(publishedTime) && (
+                <>
+                  <span aria-hidden="true">•</span>
+                  <time dateTime={modifiedTime}>Updated {displayDate(modifiedTime)}</time>
+                </>
+              )}
+            </div>
+          </header>
           <div className="public-post-content prose prose-slate mt-6 max-w-none text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: contentHtml }} />
         </article>
       </div>
       <JsonLd data={articleJsonLd({
-        title,
+        title: post.title,
         description,
         slug: post.slug,
         datePublished: publishedTime,
