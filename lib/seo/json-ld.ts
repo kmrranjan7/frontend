@@ -124,6 +124,7 @@ export type ArticleInput = {
   dateModified: string;
   author: string;
   image?: string;
+  keywords?: string[];
 };
 
 export function articleJsonLd(article: ArticleInput) {
@@ -132,6 +133,7 @@ export function articleJsonLd(article: ArticleInput) {
     "@type": "Article",
     headline: article.title,
     description: article.description,
+    keywords: article.keywords,
     image: [absoluteUrl(article.image ?? "/opengraph-image")],
     datePublished: article.datePublished,
     dateModified: article.dateModified,

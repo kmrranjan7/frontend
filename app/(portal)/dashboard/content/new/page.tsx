@@ -106,6 +106,42 @@ function extractImageUrls(value: string) {
     .join(",");
 }
 
+function extractFaqSchemaJson(value: string) {
+  const document = new DOMParser().parseFromString(value, "text/html");
+  const faqHeading = Array.from(document.querySelectorAll("h2, h3, h4"))
+    .find((heading) => /frequently asked questions|\bfaq\b/i.test(heading.textContent ?? ""));
+  if (!faqHeading) return null;
+
+  const items: Array<{ question: string; answer: string }> = [];
+  let element = faqHeading.nextElementSibling;
+  while (element && !/^H[2-4]$/.test(element.tagName)) {
+    const candidates = element.matches("li, p")
+      ? [element]
+      : Array.from(element.querySelectorAll("li, p"));
+
+    for (const item of candidates) {
+      const readableItem = item.cloneNode(true) as HTMLElement;
+      readableItem.querySelectorAll("br").forEach((lineBreak) => lineBreak.replaceWith("\n"));
+      const text = (readableItem.textContent ?? "")
+        .replace(/[ \t]+/g, " ")
+        .replace(/\s*\n\s*/g, "\n")
+        .trim();
+      const match = text.match(
+        /^Q\s*\d*\s*[.:)-]?\s*([\s\S]+?)(?:\n+|\s{2,})A\s*\d*\s*[.:)-]?\s*([\s\S]+)$/i,
+      );
+      if (!match) continue;
+      const question = match[1].replace(/\s+/g, " ").trim();
+      const answer = match[2].replace(/\s+/g, " ").trim();
+      if (question && answer) items.push({ question, answer });
+    }
+    element = element.nextElementSibling;
+  }
+
+  if (!items.length) return null;
+  const serialized = JSON.stringify(items.slice(0, 10));
+  return serialized.length <= 5_000 ? serialized : null;
+}
+
 export default function NewContentPage() {
   const formRef = useRef<HTMLFormElement>(null);
   const autosaveTimerRef = useRef<number | null>(null);
@@ -121,6 +157,8 @@ export default function NewContentPage() {
   const [seoDescription, setSeoDescription] = useState("");
   const [seoTitleManual, setSeoTitleManual] = useState(false);
   const [seoDescriptionManual, setSeoDescriptionManual] = useState(false);
+  const [selectedQualifications, setSelectedQualifications] = useState<string[]>([]);
+  const [aiGenerating, setAiGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
   const [saveError, setSaveError] = useState("");
@@ -138,6 +176,9 @@ export default function NewContentPage() {
   ], [content, displayedSlug, seoDescription, seoTitle]);
   const seoScore = seoChecks.filter(({ passed }) => passed).length * 25;
   const seoScoreLabel = seoScore >= 75 ? "Good" : seoScore >= 50 ? "Needs work" : "Incomplete";
+  const faqSeoReady = useMemo(() => {
+    return extractFaqSchemaJson(content) !== null;
+  }, [content]);
 
   const uploadImage = async (file: Blob, progress?: (percent: number) => void) => {
     const body = new FormData();
@@ -203,6 +244,9 @@ export default function NewContentPage() {
         setContent(value("contentHtml"));
         setSeoTitle(value("seoTitle"));
         setSeoDescription(value("seoDescription"));
+        setSelectedQualifications(
+          value("qualification").split(",").map((item) => item.trim()).filter(Boolean),
+        );
         seoTitleManualRef.current = Boolean(value("seoTitle"));
         seoDescriptionManualRef.current = Boolean(value("seoDescription"));
         setSeoTitleManual(seoTitleManualRef.current);
@@ -223,13 +267,25 @@ export default function NewContentPage() {
             seoFocusKeyword: value("seoFocusKeyword"),
             priorityScore: value("priorityScore"),
           };
+          const selectedQualificationValues = new Set(
+            formValues.qualification.split(",").map((item) => item.trim()).filter(Boolean),
+          );
 
           for (const element of Array.from(formRef.current.elements)) {
             if (!(element instanceof HTMLInputElement || element instanceof HTMLSelectElement)) continue;
-            if (element.name === "postType" && element instanceof HTMLInputElement) {
+            if (element.name === "qualification" && element instanceof HTMLInputElement) {
+              element.checked = selectedQualificationValues.has(element.value);
+            } else if (element.name === "postType" && element instanceof HTMLInputElement) {
               element.checked = element.value === postType;
             } else if (element.name === "isFeatured" && element instanceof HTMLInputElement) {
               element.checked = Boolean(post.isFeatured);
+            } else if (element instanceof HTMLSelectElement && element.multiple && formValues[element.name] !== undefined) {
+              const selectedValues = new Set(
+                formValues[element.name].split(",").map((item) => item.trim()).filter(Boolean),
+              );
+              for (const option of Array.from(element.options)) {
+                option.selected = selectedValues.has(option.value);
+              }
             } else if (formValues[element.name] !== undefined) {
               element.value = formValues[element.name];
             }
@@ -274,6 +330,9 @@ export default function NewContentPage() {
         setContent(restoredContent);
         setSeoTitle(values.seoTitle ?? "");
         setSeoDescription(values.seoDescription ?? "");
+        setSelectedQualifications(
+          (values.qualification ?? "").split(",").map((item) => item.trim()).filter(Boolean),
+        );
         seoTitleManualRef.current = draft.seoTitleManual ?? Boolean(values.seoTitle);
         seoDescriptionManualRef.current = draft.seoDescriptionManual ?? Boolean(values.seoDescription);
         setSeoTitleManual(seoTitleManualRef.current);
@@ -286,8 +345,20 @@ export default function NewContentPage() {
           if (!(element instanceof HTMLInputElement || element instanceof HTMLSelectElement || element instanceof HTMLTextAreaElement)) continue;
           if (["postTitle", "postSlug", "content", "seoTitle", "seoDescription"].includes(element.name)) continue;
 
-          if (element instanceof HTMLInputElement && (element.type === "radio" || element.type === "checkbox")) {
+          if (element.name === "qualification" && element instanceof HTMLInputElement) {
+            const selectedValues = new Set(
+              (values.qualification ?? "").split(",").map((item) => item.trim()).filter(Boolean),
+            );
+            element.checked = selectedValues.has(element.value);
+          } else if (element instanceof HTMLInputElement && (element.type === "radio" || element.type === "checkbox")) {
             element.checked = values[element.name] === element.value || values[element.name] === "true";
+          } else if (element instanceof HTMLSelectElement && element.multiple && values[element.name] !== undefined) {
+            const selectedValues = new Set(
+              values[element.name].split(",").map((item) => item.trim()).filter(Boolean),
+            );
+            for (const option of Array.from(element.options)) {
+              option.selected = selectedValues.has(option.value);
+            }
           } else if (values[element.name] !== undefined) {
             element.value = values[element.name];
           }
@@ -324,9 +395,11 @@ export default function NewContentPage() {
     autosaveTimerRef.current = window.setTimeout(() => {
       if (!formRef.current) return;
 
+      const draftFormData = new FormData(formRef.current);
       const values = Object.fromEntries(
-        Array.from(new FormData(formRef.current).entries()).map(([key, value]) => [key, String(value)]),
+        Array.from(draftFormData.entries()).map(([key, value]) => [key, String(value)]),
       );
+      values.qualification = draftFormData.getAll("qualification").map(String).filter(Boolean).join(", ");
       const savedAt = new Date().toLocaleTimeString("en-IN", { hour12: false });
 
       window.localStorage.setItem(POST_DRAFT_CACHE_KEY, JSON.stringify({
@@ -358,6 +431,7 @@ export default function NewContentPage() {
     setContent("");
     setSeoTitle("");
     setSeoDescription("");
+    setSelectedQualifications([]);
     seoTitleManualRef.current = false;
     seoDescriptionManualRef.current = false;
     setSeoTitleManual(false);
@@ -365,6 +439,71 @@ export default function NewContentPage() {
     setSelectedTemplateId(dashboardPostTemplates[0].id);
     setEditingPostId(null);
     window.history.replaceState(null, "", "/dashboard/content/new");
+  }
+
+  async function generatePostWithAi() {
+    if (!formRef.current || aiGenerating) return;
+    if (!postTitle.trim()) {
+      setSaveError("Enter a post title before using AI.");
+      return;
+    }
+    if (content.trim() && !window.confirm("Replace the current editor content with AI-generated content?")) return;
+
+    setAiGenerating(true);
+    setSaveError("");
+    setSaveMessage("");
+    try {
+      const aiFormData = new FormData(formRef.current);
+      const values = Object.fromEntries(
+        Array.from(aiFormData.entries()).map(([key, value]) => [key, String(value)]),
+      );
+      values.qualification = aiFormData.getAll("qualification").map(String).filter(Boolean).join(", ");
+      const response = await fetch("/api/ai/generate-post", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: postTitle,
+          postType: values.postType || "Job",
+          template: selectedTemplate.html,
+          facts: {
+            applicationId: values.applicationId,
+            department: values.department,
+            organization: values.organization,
+            qualification: values.qualification,
+            vacancies: values.vacancies,
+            startDate: values.startDate,
+            endDate: values.endDate,
+            stateName: values.stateName,
+          },
+        }),
+      });
+      const result = await response.json() as {
+        contentHtml?: string;
+        seoTitle?: string;
+        seoDescription?: string;
+        message?: string;
+      };
+      if (!response.ok || !result.contentHtml) throw new Error(result.message || "AI generation failed.");
+
+      const generatedContent = `<section class="sarkari-template-block">${result.contentHtml}</section>`;
+      setContent(generatedContent);
+      if (result.seoTitle) {
+        setSeoTitle(result.seoTitle);
+        setSeoTitleManual(false);
+        seoTitleManualRef.current = false;
+      }
+      if (result.seoDescription) {
+        setSeoDescription(result.seoDescription);
+        setSeoDescriptionManual(false);
+        seoDescriptionManualRef.current = false;
+      }
+      setSaveMessage("AI draft generated. Review every detail before publishing.");
+      cacheFormDraft();
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "AI generation failed.");
+    } finally {
+      setAiGenerating(false);
+    }
   }
 
   async function savePost(postStatus: "DRAFT" | "PUBLISHED") {
@@ -385,6 +524,16 @@ export default function NewContentPage() {
     const nullableText = (name: string) => text(name) || null;
     const vacanciesValue = text("vacancies");
     const priorityValue = text("priorityScore");
+    const qualificationValue = formData.getAll("qualification")
+      .map(String)
+      .map((value) => value.trim())
+      .filter(Boolean)
+      .join(", ");
+
+    if (qualificationValue.length > 120) {
+      setSaveError("Selected qualifications are too long. Choose fewer options.");
+      return;
+    }
 
     const payload = {
       postTitle: postTitle.trim(),
@@ -393,7 +542,7 @@ export default function NewContentPage() {
       applicationId: nullableText("applicationId"),
       department: nullableText("department"),
       organization: nullableText("organization"),
-      qualification: nullableText("qualification"),
+      qualification: qualificationValue || null,
       imageUrls: extractImageUrls(content) || null,
       vacancies: vacanciesValue ? Number(vacanciesValue) : null,
       startDate: nullableText("startDate"),
@@ -402,7 +551,7 @@ export default function NewContentPage() {
       seoTitle: seoTitle.trim() || null,
       seoDescription: seoDescription.trim() || null,
       seoFocusKeyword: nullableText("seoFocusKeyword"),
-      faqSchemaJson: null,
+      faqSchemaJson: extractFaqSchemaJson(content),
       postStatus,
       scheduledAt: null,
       postType: text("postType").toUpperCase().replace(/\s+/g, "_"),
@@ -593,22 +742,47 @@ export default function NewContentPage() {
                   <input name="applicationId" placeholder="SSC-CGL-2026" />
                 </label>
                 <label className="form-field">
-                  <span>Organization <b>*</b></span>
-                  <input name="organization" required placeholder="Staff Selection Commission" />
+                  <span>Organization</span>
+                  <input name="organization" placeholder="Staff Selection Commission" />
                 </label>
                 <label className="form-field">
                   <span>Department</span>
                   <input name="department" placeholder="Government of India" />
                 </label>
-                <label className="form-field">
-                  <span>Qualification <b>*</b></span>
-                  <select name="qualification" required defaultValue="">
-                    <option value="" disabled>Select qualification</option>
-                    {qualifications.map((qualification) => (
-                      <option key={qualification} value={qualification}>{qualification}</option>
-                    ))}
-                  </select>
-                </label>
+                <div className="form-field">
+                  <span>Qualification</span>
+                  <details className="multi-select-dropdown">
+                    <summary>
+                      <span>
+                        {selectedQualifications.length
+                          ? `${selectedQualifications.length} qualification${selectedQualifications.length === 1 ? "" : "s"} selected`
+                          : "Select qualifications"}
+                      </span>
+                      <span className="multi-select-chevron" aria-hidden="true">⌄</span>
+                    </summary>
+                    <div className="multi-select-options">
+                      {qualifications.map((qualification) => (
+                        <label key={qualification} className="multi-select-option">
+                          <input
+                            type="checkbox"
+                            name="qualification"
+                            value={qualification}
+                            checked={selectedQualifications.includes(qualification)}
+                            onChange={(event) => {
+                              setSelectedQualifications((current) => event.target.checked
+                                ? [...current, qualification]
+                                : current.filter((item) => item !== qualification));
+                            }}
+                          />
+                          <span>{qualification}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </details>
+                  {selectedQualifications.length > 0 && (
+                    <small>{selectedQualifications.join(", ")}</small>
+                  )}
+                </div>
                 <label className="form-field">
                   <span>State</span>
                   <select name="stateName" defaultValue="All India">
@@ -670,6 +844,9 @@ export default function NewContentPage() {
                     }}
                   >
                     Use template
+                  </button>
+                  <button type="button" onClick={() => void generatePostWithAi()} disabled={aiGenerating}>
+                    {aiGenerating ? "Generating…" : "✦ Generate with AI"}
                   </button>
                 </div>
               </div>
@@ -941,6 +1118,10 @@ export default function NewContentPage() {
                     <p>{label}</p>
                   </div>
                 ))}
+                <div className={faqSeoReady ? "passed" : ""}>
+                  <span>{faqSeoReady ? "✓" : "○"}</span>
+                  <p>{faqSeoReady ? "FAQ SEO schema is ready" : "Add FAQ questions and answers for structured data"}</p>
+                </div>
               </div>
             </section>
 

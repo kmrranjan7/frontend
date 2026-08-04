@@ -5,7 +5,7 @@ import { cache } from "react";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { env } from "@/config/env";
-import { articleJsonLd } from "@/lib/seo/json-ld";
+import { articleJsonLd, faqJsonLd, type FaqItem } from "@/lib/seo/json-ld";
 import { createMetadata } from "@/lib/seo/metadata";
 
 type PublicPost = Readonly<{
@@ -22,6 +22,7 @@ type PublicPost = Readonly<{
   imageUrls?: string | null;
   organization?: string | null;
   qualification?: string | null;
+  faqSchemaJson?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
 }>;
@@ -161,6 +162,24 @@ function firstImageUrl(value?: string | null): string | undefined {
   return value.split(",").map((item) => item.trim()).find(Boolean);
 }
 
+function faqItems(value?: string | null): FaqItem[] {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed.flatMap((item) => {
+      if (!item || typeof item !== "object") return [];
+      const candidate = item as { question?: unknown; answer?: unknown };
+      if (typeof candidate.question !== "string" || typeof candidate.answer !== "string") return [];
+      const question = candidate.question.trim();
+      const answer = candidate.answer.trim();
+      return question && answer ? [{ question, answer }] : [];
+    }).slice(0, 10);
+  } catch {
+    return [];
+  }
+}
+
 function categoryForPostType(postType: string): { name: string; path: string } {
   const normalized = postType.trim().toUpperCase().replace(/[\s-]+/g, "_");
   const categories: Record<string, { name: string; path: string }> = {
@@ -254,6 +273,8 @@ export default async function PublicPostPage({ params }: { params: Promise<{ slu
   const modifiedTime = validDate(post.updatedAt) || publishedTime;
   const author = post.organization?.trim() || post.department?.trim() || "Sarkari Global Result";
   const image = firstImageUrl(post.imageUrls);
+  const faqs = faqItems(post.faqSchemaJson);
+  const keywords = longTailKeywords(post);
   const breadcrumbItems = [
     { name: "Home", path: "/" },
     ...(category.path === "/" ? [] : [category]),
@@ -291,8 +312,10 @@ export default async function PublicPostPage({ params }: { params: Promise<{ slu
         datePublished: publishedTime,
         dateModified: modifiedTime,
         author,
+        keywords,
         ...(image ? { image } : {}),
       })} />
+      {faqs.length > 0 && <JsonLd data={faqJsonLd(faqs)} />}
     </div>
   );
 }

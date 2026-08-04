@@ -63,9 +63,10 @@ function formatDate(value: string | null) {
   ].join("-");
 }
 
-function deadlineChip(value: string | null) {
-  const deadline = parseDate(value);
-  if (!deadline) {
+function deadlineChip(startValue: string | null, deadlineValue: string | null) {
+  const startDate = parseDate(startValue);
+  const deadline = parseDate(deadlineValue);
+  if (!startDate || !deadline) {
     return {
       label: "To Be Announced",
       className: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
@@ -73,33 +74,31 @@ function deadlineChip(value: string | null) {
     };
   }
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const days = Math.ceil((deadline.getTime() - today.getTime()) / 86_400_000);
+  const days = Math.ceil((deadline.getTime() - startDate.getTime()) / 86_400_000);
 
   if (days < 0) {
     return {
-      label: "Closed",
-      className: "bg-slate-100 text-slate-500 ring-1 ring-slate-200",
+      label: "Check dates",
+      className: "bg-slate-100 text-slate-600 ring-1 ring-slate-200",
       closingThisWeek: false,
     };
   }
   if (days <= 7) {
     return {
-      label: days === 0 ? "Closing today" : `${days}d left`,
+      label: days === 0 ? "Same day" : days === 1 ? "1 day left" : `${days} days left`,
       className: "bg-rose-100 text-rose-800 ring-1 ring-rose-300",
-      closingThisWeek: true,
+      closingThisWeek: false,
     };
   }
   if (days <= 15) {
     return {
-      label: `${days}d left`,
+      label: `${days} days left`,
       className: "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
       closingThisWeek: false,
     };
   }
   return {
-    label: `${days}d left`,
+    label: `${days} days left`,
     className: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
     closingThisWeek: false,
   };
@@ -134,7 +133,7 @@ export default function LatestJobsExplorer({
   const renderedJobs = useMemo(
     () => visibleJobs.map((job) => ({
       job,
-      deadline: deadlineChip(job.lastDate),
+      deadline: deadlineChip(job.startDate, job.lastDate),
     })),
     [visibleJobs],
   );
