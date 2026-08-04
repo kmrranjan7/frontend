@@ -21,6 +21,16 @@ export const metadata: Metadata = {
     telephone: false,
   },
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/icons/app-icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: [
+      { url: "/icons/app-icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
+  },
 };
 
 export const viewport: Viewport = {

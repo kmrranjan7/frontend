@@ -86,7 +86,20 @@ function redesignPostIntro(html: string, title: string): string {
 }
 
 function enhancePostHtml(html: string, imageAlt: string): string {
-  const redesignedHtml = redesignPostIntro(html, imageAlt);
+  const currentLinksHtml = html
+    .replace(
+      /https:\/\/t\.me\/(?:SarkariResult2012|sarkariglobalresult\.com)/gi,
+      "https://t.me/sarkariglobalresult",
+    )
+    .replace(
+      /https:\/\/whatsapp\.com\/channel\/0029Va5IElwBlHpVBd6i5a18/gi,
+      "https://whatsapp.com/channel/0029VbCd7pX2ER6btYssot1V",
+    )
+    .replace(
+      /https:\/\/sarkariresultportal\.com\/?/gi,
+      "https://sarkariglobalresult.com/image-compressor",
+    );
+  const redesignedHtml = redesignPostIntro(currentLinksHtml, imageAlt);
   const linksEnhanced = redesignedHtml.replace(/<a\b([^>]*)>/gi, (_tag, rawAttributes: string) => {
     let attributes = rawAttributes;
     const targetPattern = /\btarget\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/i;

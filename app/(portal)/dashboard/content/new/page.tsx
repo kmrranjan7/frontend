@@ -1009,8 +1009,8 @@ export default function NewContentPage() {
                       ".sarkari-template-block table a[href*='t.me']:hover { background: #bae6fd; color: #075985; } " +
                       ".sarkari-template-block table a[href$='.pdf'], .sarkari-template-block table a[href*='.pdf?'] { background: #fee2e2; color: #b91c1c; } " +
                       ".sarkari-template-block table a[href$='.pdf']:hover, .sarkari-template-block table a[href*='.pdf?']:hover { background: #fecaca; color: #991b1b; } " +
-                      ".sarkari-template-block table a[href*='sarkariresultportal.com'] { background: #f3e8ff; color: #7e22ce; } " +
-                      ".sarkari-template-block table a[href*='sarkariresultportal.com']:hover { background: #e9d5ff; color: #6b21a8; } " +
+                      ".sarkari-template-block table a[href*='/image-compressor'] { background: #f3e8ff; color: #7e22ce; } " +
+                      ".sarkari-template-block table a[href*='/image-compressor']:hover { background: #e9d5ff; color: #6b21a8; } " +
                       ".sarkari-template-block table a[href*='bpssc.bihar.gov.in']:not([href*='.pdf']) { background: #e0e7ff; color: #3730a3; } " +
                       ".sarkari-template-block table a[href*='bpssc.bihar.gov.in']:not([href*='.pdf']):hover { background: #c7d2fe; color: #312e81; } " +
                       ".sarkari-template-block table { width: 100%; overflow: hidden; margin: 12px 0 20px; border: 1px solid #cbd5e1; border-radius: 10px; border-collapse: separate; border-spacing: 0; background: #ffffff; box-shadow: 0 7px 20px rgba(15, 23, 42, 0.06); font-size: 13px; line-height: 1.55; } " +
