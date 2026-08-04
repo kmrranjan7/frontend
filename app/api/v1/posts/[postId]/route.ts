@@ -31,7 +31,19 @@ async function proxyPostRequest(
       },
     );
     const responseText = await response.text();
-    const payload = responseText ? JSON.parse(responseText) : { success: response.ok };
+    let payload: unknown = { success: response.ok };
+
+    if (responseText) {
+      try {
+        payload = JSON.parse(responseText);
+      } catch {
+        payload = {
+          success: false,
+          message: responseText.trim() || `The post service returned HTTP ${response.status}.`,
+        };
+      }
+    }
+
     return NextResponse.json(payload, { status: response.status });
   } catch (error) {
     console.error(`Post ${method.toLowerCase()} proxy failed`, error);

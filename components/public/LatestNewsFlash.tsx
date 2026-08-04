@@ -47,7 +47,7 @@ export async function LatestNewsFlash() {
     <section className="latest-updates-flash" aria-label="Latest published updates">
       <strong>
         <span><Icon name="trend" size={13} /></span>
-        Latest Updates
+        Latest <span className="latest-live-badge">Live</span>
       </strong>
       <div>
         <div className="latest-updates-track">
