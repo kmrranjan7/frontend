@@ -45,7 +45,7 @@ const rawDashboardPostTemplates: readonly DashboardPostTemplate[] = [
 function modernizeTemplateHtml(html: string): string {
   const withoutDuplicateTitle = html.replace(/^\s*<h2\b[^>]*>[\s\S]*?<\/h2>/i, "");
 
-  return withoutDuplicateTitle.replace(/<table\b[^>]*>[\s\S]*?<\/table>/i, (table) => {
+  const withOverview = withoutDuplicateTitle.replace(/<table\b[^>]*>[\s\S]*?<\/table>/i, (table) => {
     const rows = [...table.matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)];
     const summaryRow = rows.find((row) => /short\s+information/i.test(row[1].replace(/<[^>]+>/g, " ")));
     if (!summaryRow) return table;
@@ -54,6 +54,17 @@ function modernizeTemplateHtml(html: string): string {
     if (cells.length < 2) return table;
 
     return `<section class="post-recruitment-overview" aria-labelledby="recruitment-overview-heading"><h2 id="recruitment-overview-heading">Recruitment overview</h2><div>${cells[1][1]}</div></section>`;
+  });
+
+  return withOverview.replace(/<a\b([^>]*)>/gi, (_anchor, rawAttributes: string) => {
+    let attributes = rawAttributes;
+    attributes = /\btarget\s*=/i.test(attributes)
+      ? attributes.replace(/\btarget\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/i, 'target="_blank"')
+      : `${attributes} target="_blank"`;
+    attributes = /\brel\s*=/i.test(attributes)
+      ? attributes.replace(/\brel\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/i, 'rel="noopener noreferrer"')
+      : `${attributes} rel="noopener noreferrer"`;
+    return `<a${attributes}>`;
   });
 }
 

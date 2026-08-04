@@ -48,10 +48,17 @@ function escapeHtmlAttribute(value: string): string {
 }
 
 function redesignPostIntro(html: string, title: string): string {
-  const normalizedTitle = plainText(title).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const titleWords = new Set(
+    plainText(title).toLowerCase().match(/[a-z0-9]+/g) ?? [],
+  );
   let redesigned = html.replace(/<h2\b[^>]*>([\s\S]*?)<\/h2>/i, (heading, headingContent: string) => {
-    const normalizedHeading = plainText(headingContent).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-    return normalizedHeading.startsWith(normalizedTitle) ? "" : heading;
+    const headingWords = new Set(
+      plainText(headingContent).toLowerCase().match(/[a-z0-9]+/g) ?? [],
+    );
+    const sharedWords = [...titleWords].filter((word) => headingWords.has(word)).length;
+    const comparisonSize = Math.min(titleWords.size, headingWords.size);
+    const isDuplicateTitle = comparisonSize >= 3 && sharedWords / comparisonSize >= 0.75;
+    return isDuplicateTitle ? "" : heading;
   });
 
   redesigned = redesigned.replace(/<table\b[^>]*>[\s\S]*?<\/table>/i, (table) => {
@@ -68,6 +75,10 @@ function redesignPostIntro(html: string, title: string): string {
   redesigned = redesigned.replace(
     /<h[1-6]\b[^>]*>\s*(<img\b[^>]*>)\s*<\/h[1-6]>/gi,
     '<figure class="post-content-image">$1</figure>',
+  );
+  redesigned = redesigned.replace(
+    /<p\b[^>]*>(?:\s|&nbsp;|<br\s*\/?\s*>)*<\/p>(?=\s*<h3\b)/gi,
+    "",
   );
 
   return redesigned;
@@ -257,9 +268,9 @@ export default async function PublicPostPage({ params }: { params: Promise<{ slu
           <Link href={category.path} className="text-[11px] font-bold text-indigo-700 underline underline-offset-2">← Back to {category.name}</Link>
           <header className="mt-5 border-b border-indigo-100 pb-5">
             <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.12em] text-indigo-700">{category.name}</p>
-            <h1 className="m-0 text-3xl font-extrabold leading-tight tracking-[-0.025em] text-slate-950">{post.title}</h1>
-            <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-600">
-              <span>Published by <strong className="font-bold text-slate-800">{author}</strong></span>
+            <h1 className="m-0 rounded-lg border border-blue-950 bg-[#1e3a8a] px-4 py-3 text-3xl font-extrabold leading-tight tracking-[-0.025em] text-white shadow-sm">{post.title}</h1>
+            <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold text-red-700">
+              <span>Published by <strong className="font-extrabold text-red-800">{author}</strong></span>
               <span aria-hidden="true">•</span>
               <time dateTime={publishedTime}>Published {displayDate(publishedTime)}</time>
               {displayDate(modifiedTime) !== displayDate(publishedTime) && (

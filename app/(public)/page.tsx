@@ -13,7 +13,7 @@ import {
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = createMetadata({
-  title: "Latest Government Jobs, Results & Admit Cards",
+  title: "Government Jobs, Results & Admit Cards 2026",
   description:
     "Find the latest government jobs, online forms, admit cards, exam results, answer keys, syllabus, admissions, and recruitment updates across India.",
   path: "/",

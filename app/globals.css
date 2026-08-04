@@ -435,8 +435,10 @@ button { cursor: pointer; }
 .post-recruitment-overview div { color: #334155; font-size: 14px; line-height: 1.75; }
 .post-recruitment-overview div > :first-child { margin-top: 0; }
 .post-recruitment-overview div > :last-child { margin-bottom: 0; }
+.sarkari-template-block .post-recruitment-overview + h3 { margin-top: 8px; }
 .post-content-image { margin: 18px 0; text-align: center; }
 .post-content-image img { width: auto; max-width: 100%; height: auto; display: inline-block; border-radius: 8px; }
+.sarkari-template-block .post-content-image + h3 { margin-top: 8px; }
 .faq-list { max-width: 800px; }
 .site-search { max-width: 720px; margin-bottom: 40px; }
 .site-search label { display: block; margin-bottom: 8px; font-size: 12px; font-weight: 700; }

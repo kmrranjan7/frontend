@@ -356,9 +356,10 @@ export default function HomeJobsExplorer({
             </span>
             <div>
               <p className="m-0 text-[9px] font-black uppercase tracking-[0.14em] text-cyan-700">Latest Jobs</p>
-              <h2 id="latest-jobs-heading" className="mt-0.5 text-[11px] font-bold tracking-tight text-slate-900 sm:text-[12px]">
-                Discover verified government opportunities and apply with confidence.
-              </h2>
+              <h1 id="latest-jobs-heading" className="mt-0.5 text-[11px] font-extrabold tracking-tight text-indigo-950 sm:text-[12px]">
+                Latest Government Jobs, Results &amp; Admit Cards 2026
+              </h1>
+              <p className="m-0 mt-0.5 text-[9px] leading-4 text-slate-600">Discover verified opportunities and apply with confidence.</p>
             </div>
           </div>
 

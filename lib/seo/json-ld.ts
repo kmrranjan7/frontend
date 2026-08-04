@@ -35,7 +35,7 @@ export function websiteJsonLd() {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: absoluteUrl("/search?q={search_term_string}"),
+        urlTemplate: absoluteUrl("/?q={search_term_string}"),
       },
       "query-input": "required name=search_term_string",
     },
