@@ -360,14 +360,16 @@ const [status, setStatus] = useState<null | { type: "info" | "error" | "success"
 
 const [fitMode, setFitMode] = useState<FitMode>("FIT");
 const [forceWhiteBg, setForceWhiteBg] = useState(true);
-const [targetKB, setTargetKB] = useState(50);
+const [targetKBInput, setTargetKBInput] = useState("50");
 
 // Manual crop
 const [manualCrop, setManualCrop] = useState(false);
 const [lockAspect, setLockAspect] = useState(true);
 const [crop, setCrop] = useState<Crop>(null);
 
-const TARGET_KB = targetKB;
+const parsedTargetKB = Number(targetKBInput);
+const targetKBValid = Number.isInteger(parsedTargetKB) && parsedTargetKB >= 5 && parsedTargetKB <= 5000;
+const TARGET_KB = targetKBValid ? parsedTargetKB : 50;
 const aspect = useMemo(() => (height > 0 ? width / height : 1), [width, height]);
 const notify = (type: "info" | "error" | "success", msg: string) => setStatus({ type, msg });
 
@@ -478,10 +480,11 @@ return c;
 
 const compressToTarget = async (canvas: HTMLCanvasElement) => {
 const maxBytes = TARGET_KB * 1024;
-let low = 0.15, high = 0.95;
+let low = 0.12, high = 0.98;
 let best: Blob | null = null;
 
-for (let i = 0; i < 8; i++) {
+// Find the highest visual quality that still fits the user's size budget.
+for (let i = 0; i < 10; i++) {
 const q = (low + high) / 2;
 const blob: Blob | null = await new Promise((res) =>
 canvas.toBlob((b) => res(b), "image/jpeg", q)
@@ -489,14 +492,14 @@ canvas.toBlob((b) => res(b), "image/jpeg", q)
 if (!blob) break;
 if (blob.size <= maxBytes) {
 best = blob;
-low = q + 0.03;
+low = q;
 } else {
-high = q - 0.03;
+high = q;
 }
-if (high - low < 0.02) break;
+if (high - low < 0.005) break;
 }
 if (!best) {
-best = await new Promise((res) => canvas.toBlob((b) => res(b), "image/jpeg", 0.15));
+best = await new Promise((res) => canvas.toBlob((b) => res(b), "image/jpeg", 0.12));
 }
 return best!;
 };
@@ -655,6 +658,10 @@ if (!imageSrc || !canvasRef.current) {
 notify("error", "Upload or capture an image first.");
 return;
 }
+if (!targetKBValid) {
+notify("error", "Enter a Max KB value between 5 and 5,000.");
+return;
+}
 setBusy(true);
 setStatus({ type: "info", msg: "Processing…" });
 
@@ -712,7 +719,7 @@ setFinalSize(null);
 
 setFitMode("FIT");
 setForceWhiteBg(true);
-setTargetKB(50);
+setTargetKBInput("50");
 
 setManualCrop(false);
 setLockAspect(true);
@@ -896,12 +903,13 @@ Force white background
 <span className="font-semibold text-slate-600">Max KB</span>
 <input
 type="number"
-min={15}
-max={300}
-value={targetKB}
-onChange={(e) =>
-setTargetKB(Math.max(15, Math.min(300, Number(e.target.value) || 50)))
-}
+min={5}
+max={5000}
+step={1}
+inputMode="numeric"
+value={targetKBInput}
+aria-invalid={!targetKBValid}
+onChange={(e) => setTargetKBInput(e.target.value)}
 className="w-20 rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs font-medium text-slate-800"
 />
 </div>
