@@ -107,6 +107,8 @@ function extractImageUrls(value: string) {
 }
 
 function extractFaqSchemaJson(value: string) {
+  if (typeof DOMParser === "undefined") return null;
+
   const document = new DOMParser().parseFromString(value, "text/html");
   const faqHeading = Array.from(document.querySelectorAll("h2, h3, h4"))
     .find((heading) => /frequently asked questions|\bfaq\b/i.test(heading.textContent ?? ""));
@@ -164,7 +166,8 @@ export default function NewContentPage() {
   const [saveError, setSaveError] = useState("");
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const automaticSlug = useMemo(() => createSlug(postTitle), [postTitle]);
-  const displayedSlug = manualSlug ? postSlug : automaticSlug;
+  const displayedSlug = manualSlug ? createSlug(postSlug) : automaticSlug;
+  const editableSlug = manualSlug ? postSlug : automaticSlug;
   const permalink = `${env.frontendUrl}/${displayedSlug}`;
   const selectedTemplate = dashboardPostTemplates.find(({ id }) => id === selectedTemplateId)
     ?? dashboardPostTemplates[0];
@@ -210,12 +213,15 @@ export default function NewContentPage() {
 
 
   useEffect(() => {
-    const postId = new URLSearchParams(window.location.search).get("postId");
-    if (!postId) return;
+    const searchParams = new URLSearchParams(window.location.search);
+    const postId = searchParams.get("postId");
+    const copyPostId = searchParams.get("copyPostId");
+    const sourcePostId = postId || copyPostId;
+    if (!sourcePostId) return;
 
     const controller = new AbortController();
 
-    fetch(`/api/v1/posts/${encodeURIComponent(postId)}`, {
+    fetch(`/api/v1/posts/${encodeURIComponent(sourcePostId)}`, {
       signal: controller.signal,
       cache: "no-store",
     })
@@ -237,18 +243,24 @@ export default function NewContentPage() {
           .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
           .join(" ");
 
-        setEditingPostId(postId);
-        setPostTitle(value("postTitle"));
-        setPostSlug(value("postSlug"));
-        setManualSlug(true);
+        const copiedTitle = copyPostId
+          ? `${value("postTitle").slice(0, 175).trim()} Copy`
+          : value("postTitle");
+
+        setEditingPostId(postId ? postId : null);
+        setPostTitle(copiedTitle);
+        setPostSlug(copyPostId ? "" : value("postSlug"));
+        setManualSlug(!copyPostId);
         setContent(value("contentHtml"));
-        setSeoTitle(value("seoTitle"));
-        setSeoDescription(value("seoDescription"));
+        setSeoTitle(copyPostId ? createSeoTitle(copiedTitle) : value("seoTitle"));
+        setSeoDescription(copyPostId
+          ? createMetaDescription(value("contentHtml"), copiedTitle)
+          : value("seoDescription"));
         setSelectedQualifications(
           value("qualification").split(",").map((item) => item.trim()).filter(Boolean),
         );
-        seoTitleManualRef.current = Boolean(value("seoTitle"));
-        seoDescriptionManualRef.current = Boolean(value("seoDescription"));
+        seoTitleManualRef.current = copyPostId ? false : Boolean(value("seoTitle"));
+        seoDescriptionManualRef.current = copyPostId ? false : Boolean(value("seoDescription"));
         setSeoTitleManual(seoTitleManualRef.current);
         setSeoDescriptionManual(seoDescriptionManualRef.current);
 
@@ -301,7 +313,8 @@ export default function NewContentPage() {
   }, []);
 
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).has("postId")) return;
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.has("postId") || searchParams.has("copyPostId")) return;
 
     const cachedDraft = window.localStorage.getItem(POST_DRAFT_CACHE_KEY);
     if (!cachedDraft || !formRef.current) return;
@@ -514,6 +527,10 @@ export default function NewContentPage() {
     setSaveError("");
 
     if (!form.reportValidity()) return;
+    if (displayedSlug.length < 3) {
+      setSaveError("Permalink must contain at least 3 letters or numbers.");
+      return;
+    }
     if (countWordsFromHtml(content) < 2) {
       setSaveError("Add post content before saving.");
       return;
@@ -688,13 +705,15 @@ export default function NewContentPage() {
                       name="postSlug"
                       required
                       placeholder="ssc-cgl-recruitment-2026"
-                      value={displayedSlug}
+                      value={editableSlug}
                       onChange={(event) => {
                         setManualSlug(true);
-                        setPostSlug(createSlug(event.target.value));
+                        setPostSlug(event.target.value);
                       }}
+                      onBlur={() => setPostSlug((value) => createSlug(value))}
                     />
                   </div>
+                  <small>You may type spaces or special characters; they are converted to an SEO-friendly URL after editing.</small>
                 </label>
 
                 <div className="permalink-panel form-field-wide">

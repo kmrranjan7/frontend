@@ -33,6 +33,7 @@ export function PostRowActions({ postId }: { postId: string }) {
   return (
     <div className="row-actions">
       <Link href={`/dashboard/content/new?postId=${encodeURIComponent(postId)}`}>Edit</Link>
+      <Link href={`/dashboard/content/new?copyPostId=${encodeURIComponent(postId)}`}>Copy</Link>
       <button type="button" onClick={() => setConfirmOpen(true)} disabled={deleting}>
         Delete
       </button>
