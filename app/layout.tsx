@@ -13,18 +13,54 @@ export const metadata: Metadata = {
   authors: [{ name: siteConfig.publisher, url: siteConfig.url }],
   creator: siteConfig.publisher,
   publisher: siteConfig.publisher,
-  category: "Government Jobs, Sarkari Global Results, Exams and Education",
+  category: "Government Jobs",
+  classification: "Government Jobs, Recruitment, Results, Admit Cards, Education",
   referrer: "origin-when-cross-origin",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  manifest: "/manifest.webmanifest",
+  manifest: siteConfig.manifest,
+  alternates: { canonical: siteConfig.url },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    url: siteConfig.url,
+    title: siteConfig.name,
+    description: siteConfig.description,
+    siteName: siteConfig.name,
+    locale: siteConfig.locale,
+    images: [{
+      url: siteConfig.ogImage,
+      width: 1200,
+      height: 630,
+      alt: siteConfig.name,
+    }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.name,
+    description: siteConfig.description,
+    creator: siteConfig.twitter,
+    site: siteConfig.twitter,
+    images: [siteConfig.ogImage],
+  },
   icons: {
     icon: [
       { url: "/favicon.ico" },
       { url: "/icons/app-icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icons/app-icon-512.png", type: "image/png", sizes: "512x512" },
     ],
     shortcut: "/favicon.ico",
     apple: [
@@ -46,7 +82,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang={siteConfig.language} data-scroll-behavior="smooth">
+    <html lang={siteConfig.language} suppressHydrationWarning data-scroll-behavior="smooth">
       <body>{children}</body>
     </html>
   );

@@ -14,7 +14,7 @@ type SeoMetadataInput = {
   noIndex?: boolean;
 };
 
-const DEFAULT_OG_IMAGE = "/opengraph-image";
+const DEFAULT_OG_IMAGE = siteConfig.ogImage;
 
 export function createMetadata({
   title,
@@ -58,7 +58,7 @@ export function createMetadata({
   return {
     title,
     description,
-    keywords,
+    keywords: [...new Set([siteConfig.name, ...(keywords ?? [])])],
     alternates: { canonical },
     openGraph,
     twitter: {

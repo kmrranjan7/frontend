@@ -13,16 +13,29 @@ import {
 import { createMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = createMetadata({
-  title: "Government Jobs, Results & Admit Cards 2026",
+  title: "Sarkari Global Result 2026: Latest Government Jobs, Online Forms, Admit Card & Results",
   description:
-    "Find the latest government jobs, online forms, admit cards, exam results, answer keys, syllabus, admissions, and recruitment updates across India.",
+    "Get the latest Sarkari Global Result 2026 updates including Government Jobs, Online Forms, Admit Cards, Exam Results, Answer Keys, Syllabus, Admissions, Scholarships, Railway, SSC, UPSC, Banking, Police, Defence, PSU and State Government recruitment notifications.",
   path: "/",
   keywords: [
-    "government jobs",
-    "sarkari result",
-    "latest recruitment",
-    "admit card",
-    "exam result",
+  "Sarkari Global Result",
+   "Sarkari Result 2026",
+  "Government Jobs 2026",
+  "Latest Government Jobs",
+  "Online Form 2026",
+  "Admit Card",
+  "Exam Result",
+  "Answer Key",
+  "Syllabus",
+  "SSC Jobs",
+  "Railway Recruitment",
+  "Bank Jobs",
+  "UPSC Recruitment",
+  "Police Recruitment",
+  "Defence Jobs",
+  "PSU Recruitment",
+  "State Government Jobs",
+  "Free Job Alert",
   ],
 });
 

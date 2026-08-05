@@ -16,9 +16,11 @@ export function organizationJsonLd() {
     "@type": "Organization",
     "@id": absoluteUrl("/#organization"),
     name: siteConfig.name,
+    alternateName: siteConfig.shortName,
     url: siteConfig.url,
-    logo: absoluteUrl("/icon"),
+    logo: absoluteUrl(siteConfig.logo),
     email: siteConfig.email,
+    sameAs: [siteConfig.telegram, siteConfig.whatsapp],
   };
 }
 
@@ -29,6 +31,7 @@ export function websiteJsonLd() {
     "@id": absoluteUrl("/#website"),
     url: siteConfig.url,
     name: siteConfig.name,
+    alternateName: siteConfig.shortName,
     description: siteConfig.description,
     publisher: { "@id": absoluteUrl("/#organization") },
     potentialAction: {
@@ -134,7 +137,7 @@ export function articleJsonLd(article: ArticleInput) {
     headline: article.title,
     description: article.description,
     keywords: article.keywords,
-    image: [absoluteUrl(article.image ?? "/opengraph-image")],
+    image: [absoluteUrl(article.image ?? siteConfig.ogImage)],
     datePublished: article.datePublished,
     dateModified: article.dateModified,
     mainEntityOfPage: {
