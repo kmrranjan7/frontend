@@ -1146,3 +1146,34 @@ button { cursor: pointer; }
   .footer-link-group a { min-height: 34px; }
   .footer-bottom { padding-bottom: 8px; }
 }
+
+/* Keep article tables in their original format on phones; only allow content
+   within cells to wrap so the complete table remains visible without scrolling. */
+@media (max-width: 640px) {
+  .public-post-content .post-table-mobile-responsive {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .public-post-content .sarkari-template-block .post-table-mobile-responsive > table,
+  .public-post-content .post-table-mobile-responsive > table {
+    display: table;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    table-layout: fixed;
+  }
+  .public-post-content .sarkari-template-block .post-table-mobile-responsive > table thead,
+  .public-post-content .post-table-mobile-responsive > table thead { display: table-header-group; }
+  .public-post-content .sarkari-template-block .post-table-mobile-responsive > table tbody,
+  .public-post-content .post-table-mobile-responsive > table tbody { display: table-row-group; }
+  .public-post-content .sarkari-template-block .post-table-mobile-responsive > table tfoot,
+  .public-post-content .post-table-mobile-responsive > table tfoot { display: table-footer-group; }
+  .public-post-content .sarkari-template-block .post-table-mobile-responsive > table :where(th, td),
+  .public-post-content .post-table-mobile-responsive > table :where(th, td) {
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}

@@ -122,7 +122,7 @@ function enhancePostHtml(html: string, imageAlt: string): string {
     return `<a${attributes}>`;
   });
 
-  return linksEnhanced.replace(/<img\b([^>]*)>/gi, (_tag, rawAttributes: string) => {
+  const imagesEnhanced = linksEnhanced.replace(/<img\b([^>]*)>/gi, (_tag, rawAttributes: string) => {
     let attributes = rawAttributes.replace(
       /\bsrc\s*=\s*(["'])\.\.\/(?:\.\.\/)*uploads\//i,
       "src=$1/uploads/",
@@ -136,6 +136,13 @@ function enhancePostHtml(html: string, imageAlt: string): string {
 
     return `<img${attributes}>`;
   });
+
+  // Keep the original table markup and visual design. The wrapper is used only
+  // by the mobile stylesheet to let cell content wrap inside the viewport.
+  return imagesEnhanced.replace(
+    /<table\b[^>]*>[\s\S]*?<\/table>/gi,
+    (table) => `<div class="post-table-mobile-responsive">${table}</div>`,
+  );
 }
 
 function fallbackDescription(post: PublicPost): string {
