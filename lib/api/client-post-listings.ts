@@ -9,6 +9,20 @@ type ListingApiResponse = Readonly<{
   data?: PostListingPage;
 }>;
 
+function sortListingsByPriority(page: PostListingPage): PostListingPage {
+  return {
+    ...page,
+    content: [...page.content].sort((left, right) => {
+      const priorityDifference = (right.priorityScore ?? 0) - (left.priorityScore ?? 0);
+      if (priorityDifference) return priorityDifference;
+
+      const leftDate = left.startDate || left.createdAt || "";
+      const rightDate = right.startDate || right.createdAt || "";
+      return rightDate.localeCompare(leftDate);
+    }),
+  };
+}
+
 async function requestPublishedListings({
   postType,
   page,
@@ -30,6 +44,7 @@ async function requestPublishedListings({
   });
 
   if (postType) query.set("postType", postType);
+  query.set("priorityFirst", "true");
   if (search.trim()) query.set("search", search.trim());
 
   const response = await fetch(`/api/v1/jobs?${query}`, {
@@ -42,7 +57,7 @@ async function requestPublishedListings({
     throw new Error(payload.message || "Unable to load published updates.");
   }
 
-  return payload.data;
+  return sortListingsByPriority(payload.data);
 }
 
 export async function fetchPublishedJobs({

@@ -28,6 +28,7 @@ export type PostListingItem = Readonly<{
   vacancies: number | null;
   department: string | null;
   qualification: string | null;
+  priorityScore: number;
 }>;
 
 export type PostListingPage = Readonly<{
@@ -40,6 +41,20 @@ export type PostListingPage = Readonly<{
   first: boolean;
   last: boolean;
 }>;
+
+export function sortListingsByPriority(page: PostListingPage): PostListingPage {
+  return {
+    ...page,
+    content: [...page.content].sort((left, right) => {
+      const priorityDifference = (right.priorityScore ?? 0) - (left.priorityScore ?? 0);
+      if (priorityDifference) return priorityDifference;
+
+      const leftDate = left.startDate || left.createdAt || "";
+      const rightDate = right.startDate || right.createdAt || "";
+      return rightDate.localeCompare(leftDate);
+    }),
+  };
+}
 
 type ApiResponse = Readonly<{
   success: boolean;
@@ -74,13 +89,14 @@ export async function fetchPostListings({
 
   if (postType) query.set("postType", postTypeConfig[postType].apiValue);
   if (search.trim()) query.set("search", search.trim());
-  if (status) query.set("status", status);
+  if (status) {
+    query.set("status", status);
+    if (status === "PUBLISHED") query.set("priorityFirst", "true");
+  }
 
   const response = await fetch(`${env.backendApiUrl}/api/v1/jobs?${query}`, {
     headers: status === "PUBLISHED" ? undefined : await dashboardAuthHeaders(),
-    ...(status === "PUBLISHED"
-      ? { next: { revalidate: 300 } }
-      : { cache: "no-store" as const }),
+    cache: "no-store",
   });
   const payload = await response.json() as ApiResponse;
 
@@ -88,5 +104,5 @@ export async function fetchPostListings({
     throw new Error(payload.message || "Unable to load content.");
   }
 
-  return payload.data;
+  return status === "PUBLISHED" ? sortListingsByPriority(payload.data) : payload.data;
 }

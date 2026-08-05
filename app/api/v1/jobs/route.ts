@@ -6,6 +6,7 @@ const allowedParameters = new Set([
   "status",
   "search",
   "sortDir",
+  "priorityFirst",
   "page",
   "size",
 ]);

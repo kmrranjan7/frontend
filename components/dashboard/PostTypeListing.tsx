@@ -81,6 +81,7 @@ export async function PostTypeListing({
                     <th>Start date</th>
                     <th>Last date</th>
                     <th>Status</th>
+                    <th>Priority</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -93,6 +94,7 @@ export async function PostTypeListing({
                       <td>{formatDate(item.startDate)}</td>
                       <td>{formatDate(item.lastDate)}</td>
                       <td><span className={`listing-status ${item.status.toLowerCase()}`}>{item.status.replaceAll("_", " ")}</span></td>
+                      <td><span className="listing-priority">{item.priorityScore}</span></td>
                       <td><PostRowActions postId={item.id} /></td>
                     </tr>
                   ))}
