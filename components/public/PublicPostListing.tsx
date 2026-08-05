@@ -121,8 +121,8 @@ export function PublicPostListing({
             </div>
             <Link href={`/${encodeURIComponent(item.slug)}`} className="mt-2 line-clamp-2 text-[13px] font-bold leading-[18px] text-slate-900 transition-colors hover:text-cyan-800">{item.title}</Link>
             <div className="mt-2 grid grid-cols-2 gap-1.5 border-t border-slate-100 pt-2 text-[9px] text-slate-600">
-              <p className="m-0 min-w-0"><span className="block font-bold uppercase tracking-wide text-slate-400">State</span><span className="block truncate font-semibold text-slate-700">{item.state || "All India"}</span></p>
-              <p className="m-0 min-w-0"><span className="block font-bold uppercase tracking-wide text-slate-400">Published</span><span className="block truncate font-semibold text-slate-700">{formatDate(item.startDate)}</span></p>
+              <p className="m-0 min-w-0"><span className="block font-black uppercase tracking-wide text-slate-400">State</span><span className="block truncate font-bold text-slate-700">{item.state || "All India"}</span></p>
+              <p className="m-0 min-w-0"><span className="block font-black uppercase tracking-wide text-slate-400">Published</span><span className="block truncate font-bold text-slate-700">{formatDate(item.startDate)}</span></p>
             </div>
             <div className="mt-2 border-t border-slate-100 pt-2"><PublicListingActions item={item} viewHref={`/${encodeURIComponent(item.slug)}`} savedLabel={singularLabel.toUpperCase()} /></div>
           </article>

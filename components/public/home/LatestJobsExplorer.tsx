@@ -481,11 +481,11 @@ export default function LatestJobsExplorer({
                   </Link>
 
                   <div className="mt-1 grid grid-cols-2 gap-x-1.5 gap-y-0.5 border-t border-slate-100 pt-1 pr-7 text-[8px] leading-3 text-slate-600 sm:text-[9px]">
-                    <p className="m-0 min-w-0"><span className="block font-bold uppercase tracking-wide text-slate-400">State</span><span className="line-clamp-1 font-semibold text-slate-700">{job.state || "All India"}</span></p>
-                    <p className="m-0 min-w-0"><span className="block font-bold uppercase tracking-wide text-slate-400">Seats</span><span className="line-clamp-1 font-semibold text-emerald-700">{job.vacancies?.toLocaleString("en-IN") ?? "Not specified"}</span></p>
-                    <p className="m-0 min-w-0"><span className="block font-bold uppercase tracking-wide text-slate-400">Starts</span><span className="line-clamp-1 font-semibold text-slate-700">{formatDate(job.startDate)}</span></p>
+                    <p className="m-0 min-w-0"><span className="block font-black uppercase tracking-wide text-slate-400">State</span><span className="line-clamp-1 font-bold text-slate-700">{job.state || "All India"}</span></p>
+                    <p className="m-0 min-w-0"><span className="block font-black uppercase tracking-wide text-slate-400">Seats</span><span className="line-clamp-1 font-bold text-emerald-700">{job.vacancies?.toLocaleString("en-IN") ?? "Not specified"}</span></p>
+                    <p className="m-0 min-w-0"><span className="block font-black uppercase tracking-wide text-slate-400">Starts</span><span className="line-clamp-1 font-bold text-slate-700">{formatDate(job.startDate)}</span></p>
                     <div className="min-w-0">
-                      <p className="m-0 min-w-0"><span className="block font-bold uppercase tracking-wide text-slate-400">Last date</span><span className="line-clamp-1 font-bold text-rose-700">{formatDate(job.lastDate)}</span></p>
+                      <p className="m-0 min-w-0"><span className="block font-black uppercase tracking-wide text-slate-400">Last date</span><span className="line-clamp-1 font-black text-rose-700">{formatDate(job.lastDate)}</span></p>
                       <span className="absolute right-1.5 bottom-1.5 flex shrink-0 flex-col items-center gap-1">
                         <button
                           type="button"

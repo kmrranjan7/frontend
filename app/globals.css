@@ -51,6 +51,30 @@ button { cursor: pointer; }
 .login-form > small { color: #94a3b8; font-size: 9px; line-height: 1.5; text-align: center; }
 .login-error { padding: 9px 10px; margin: 0; border: 1px solid #fecaca; border-radius: 8px; background: #fff7f7; color: #b91c1c; font-size: 11px; line-height: 1.45; }
 
+@media (max-width: 767px) {
+  .login-page { min-height: 100svh; align-items: start; padding: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom)); background: radial-gradient(circle at 100% 0, #dbeafe 0, transparent 36%), linear-gradient(160deg, #f8fbff, #eef5ff); }
+  .login-panel { width: 100%; max-width: 480px; margin-top: clamp(20px, 9vh, 68px); padding: 24px 20px 22px; border-radius: 16px; box-shadow: 0 18px 42px rgb(30 64 175 / 12%); }
+  .login-panel > .logo { font-size: 18px; }
+  .login-heading { margin: 24px 0 22px; }
+  .login-heading > span { font-size: 10px; }
+  .login-heading h1 { margin: 6px 0 8px; font-size: clamp(26px, 8vw, 31px); }
+  .login-heading p { font-size: 13px; line-height: 1.55; }
+  .login-form { gap: 16px; }
+  .login-form label > span { margin-bottom: 7px; font-size: 12px; }
+  .login-form label > div { min-height: 50px; gap: 10px; padding-inline: 14px; border-radius: 10px; }
+  .login-form input { font-size: 16px; }
+  .login-form > button { min-height: 50px; border-radius: 10px; font-size: 13px; }
+  .login-form > small { padding-inline: 8px; font-size: 10px; }
+  .login-error { padding: 10px 12px; border-radius: 10px; font-size: 12px; }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .login-page { min-height: 100svh; padding: 32px; }
+  .login-panel { width: min(100%, 460px); padding: 36px; }
+  .login-form label > div, .login-form > button { min-height: 48px; }
+  .login-form input { font-size: 16px; }
+}
+
 .public-site { min-height: 100vh; display: flex; overflow-x: clip; flex-direction: column; background: #ffffff; }
 .public-site > main { min-width: 0; flex: 1 0 auto; padding-top: 92px; }
 .public-site > .public-header, .public-site > .public-footer { flex: none; }
@@ -775,6 +799,9 @@ button { cursor: pointer; }
 .sarkari-template-block table a[href*="sarkariresultportal.com"]:hover { background: #e9d5ff; color: #6b21a8; }
 .sarkari-template-block table a[href*="bpssc.bihar.gov.in"]:not([href*=".pdf"]) { background: #e0e7ff; color: #3730a3; }
 .sarkari-template-block table a[href*="bpssc.bihar.gov.in"]:not([href*=".pdf"]):hover { background: #c7d2fe; color: #312e81; }
+.post-table-responsive { max-width: 100%; }
+.public-post-content .post-content-image { display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 8px; margin: 20px 0; border: 1px solid #dbeafe; border-radius: 12px; background: linear-gradient(145deg, #f8fbff, #fff); box-shadow: 0 8px 20px rgb(15 23 42 / 6%); }
+.public-post-content .post-content-image img, .public-post-content > img, .public-post-content p > img { display: block; width: auto !important; max-width: 100% !important; height: auto !important; max-height: 720px; margin: 0 auto; border-radius: 8px; object-fit: contain; }
 .sarkari-template-block ul, .sarkari-template-block ol { padding-left: 24px; }
 .sarkari-template-block ul { list-style: disc; }
 .sarkari-template-block ol { list-style: decimal; }
@@ -786,6 +813,18 @@ button { cursor: pointer; }
 .candidate-notice div { display: flex; flex-direction: column; gap: 4px; }
 .candidate-notice small { color: #2563eb; font-size: 11px; font-weight: 800; letter-spacing: .1em; }
 .candidate-notice strong { color: #172554; font-size: 16px; line-height: 1.5; }
+
+@media (max-width: 1000px) {
+  .public-post-page { background: linear-gradient(180deg, #f8fbff 0, #fff 20rem); }
+  .public-post-article { box-shadow: 0 10px 24px rgb(15 23 42 / 7%); }
+  .public-post-content .post-content-image { padding: 6px; margin: 16px 0; border-radius: 10px; }
+  .public-post-content .post-content-image img, .public-post-content > img, .public-post-content p > img { max-height: none; border-radius: 7px; }
+  .public-post-content .post-table-responsive { max-width: 100%; overflow: hidden; margin: 12px 0 20px; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff; }
+  .public-post-content .post-table-responsive > table, .public-post-content .sarkari-template-block .post-table-responsive > table { display: table; width: 100%; min-width: 0; max-width: 100%; margin: 0; border: 0; border-radius: 0; border-collapse: collapse; table-layout: fixed; box-shadow: none; }
+  .public-post-content .post-table-responsive > table th, .public-post-content .post-table-responsive > table td { min-width: 0; padding: 8px; font-size: 11px; overflow-wrap: anywhere; word-break: break-word; }
+  .public-post-content .post-table-responsive > table th { font-size: 10px; }
+  .public-post-content .post-table-responsive > table a { min-height: 32px; padding: 4px 6px; white-space: normal; text-align: center; }
+}
 .input-prefix { height: 48px; display: flex; align-items: center; overflow: hidden; }
 .input-prefix > span { height: 100%; display: flex; align-items: center; padding: 0 13px; border-right: 1px solid #e5e2e8; background: #f8fafc; color: #64748b; font-size: 14px; }
 .input-prefix input { height: 100%; border: 0; border-radius: 0; box-shadow: none !important; }
