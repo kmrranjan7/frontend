@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   creator: siteConfig.publisher,
   publisher: siteConfig.publisher,
   category: "Government Jobs",
-  classification: "Government Jobs, Recruitment, Results, Admit Cards, Education",
+  classification: "Sarkari Global Result, Government Jobs, Recruitment, Sarkari Result, Online Forms, Admit Cards, Results, Education Portal",
   referrer: "origin-when-cross-origin",
   formatDetection: {
     email: false,

@@ -74,24 +74,47 @@ function deadlineChip(startValue: string | null, deadlineValue: string | null) {
     };
   }
 
-  const days = Math.ceil((deadline.getTime() - startDate.getTime()) / 86_400_000);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const days = Math.ceil(
+    (deadline.getTime() - today.getTime()) / 86_400_000
+  );
+
+  if (today < startDate) {
+    return {
+      label: "Not Started",
+      className: "bg-sky-50 text-sky-700 ring-1 ring-sky-200",
+      closingThisWeek: false,
+    };
+  }
+
   if (days < 0) {
     return {
-      label: "Check dates",
+      label: "Closed",
       className: "bg-slate-100 text-slate-600 ring-1 ring-slate-200",
       closingThisWeek: false,
     };
   }
+
+  if (days === 0) {
+    return {
+      label: "Last Day",
+      className: "bg-red-100 text-red-800 ring-1 ring-red-300",
+      closingThisWeek: true,
+    };
+  }
+
   if (days <= 7) {
     return {
-      label: days === 0 ? "Same day" : days === 1 ? "1 day left" : `${days} days left`,
+      label: `${days} day${days > 1 ? "s" : ""} left`,
       className: "bg-rose-100 text-rose-800 ring-1 ring-rose-300",
-      closingThisWeek: false,
+      closingThisWeek: true,
     };
   }
   if (days <= 15) {
     return {
-      label: days === 1 ? "1 day left" : `${days} days left`,
+      label: `${days} days left`,
       className: "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
       closingThisWeek: false,
     };

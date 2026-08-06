@@ -306,9 +306,8 @@ export default async function PublicPostPage({ params }: { params: Promise<{ slu
       <div className="public-post-shell mx-auto w-[min(900px,94vw)]">
         <Breadcrumbs items={breadcrumbItems} />
         <article className="public-post-article mt-3 rounded-xl border border-indigo-100 bg-white p-6 shadow-[0_12px_30px_rgba(15,23,42,0.08)]">
-          <Link href={category.path} className="public-post-back text-[11px] font-bold text-indigo-700 underline underline-offset-2">← Back to {category.name}</Link>
           <header className="public-post-header mt-5 border-b border-indigo-100 pb-5">
-            <p className="public-post-category mb-2 text-xs font-extrabold uppercase tracking-[0.12em] text-indigo-700">{category.name}</p>
+            {/* <p className="public-post-category mb-2 text-xs font-extrabold uppercase tracking-[0.12em] text-indigo-700">{category.name}</p> */}
             <h1 className="public-post-title m-0 rounded-lg border border-blue-950 bg-[#1e3a8a] px-4 py-3 text-3xl font-extrabold leading-tight tracking-[-0.025em] text-white shadow-sm">{post.title}</h1>
             <div className="public-post-meta mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold text-red-700">
               <span>Published by <strong className="font-extrabold text-red-800">{author}</strong></span>
