@@ -75,13 +75,12 @@ export function faqJsonLd(items: FaqItem[]) {
 
 export type JobPostingInput = {
   title: string;
-  description: string;
+  descriptionHtml: string;
+  identifier: string;
   slug: string;
   datePosted: string;
   validThrough: string;
   organization: string;
-  employmentType: string;
-  locality: string;
   region: string;
   vacancies?: number;
 };
@@ -91,15 +90,14 @@ export function jobPostingJsonLd(job: JobPostingInput) {
     "@context": "https://schema.org",
     "@type": "JobPosting",
     title: job.title,
-    description: `<p>${job.description}</p>`,
+    description: job.descriptionHtml,
     identifier: {
       "@type": "PropertyValue",
       name: job.organization,
-      value: job.slug,
+      value: job.identifier,
     },
     datePosted: job.datePosted,
     validThrough: job.validThrough,
-    employmentType: job.employmentType,
     hiringOrganization: {
       "@type": "Organization",
       name: job.organization,
@@ -108,13 +106,12 @@ export function jobPostingJsonLd(job: JobPostingInput) {
       "@type": "Place",
       address: {
         "@type": "PostalAddress",
-        addressLocality: job.locality,
         addressRegion: job.region,
         addressCountry: "IN",
       },
     },
-    totalJobOpenings: job.vacancies,
-    url: absoluteUrl(`/jobs/${job.slug}`),
+    ...(job.vacancies ? { totalJobOpenings: job.vacancies } : {}),
+    url: absoluteUrl(`/${job.slug}`),
     directApply: false,
   };
 }

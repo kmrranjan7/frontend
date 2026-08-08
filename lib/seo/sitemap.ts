@@ -4,7 +4,6 @@ import { fetchPostListings, type PostListingItem } from "@/lib/api/post-listings
 const SITEMAP_PAGE_SIZE = 100;
 export const POST_URLS_PER_SITEMAP = 1000;
 const API_PAGES_PER_SITEMAP = POST_URLS_PER_SITEMAP / SITEMAP_PAGE_SIZE;
-export const STATIC_SITEMAP_LAST_MODIFIED = new Date().toISOString();
 
 export const STATIC_PAGE_PATHS = [
   "/",
@@ -66,13 +65,9 @@ export async function fetchPublishedPostChunk(sitemapPage: number): Promise<{
 
 export async function fetchPublishedPostSummary(): Promise<{
   totalPosts: number;
-  lastmod?: string;
 }> {
   const page = await fetchPostListings({ page: 0, size: 1, status: "PUBLISHED" });
-  return {
-    totalPosts: page.totalElements,
-    ...(page.content[0]?.createdAt ? { lastmod: page.content[0].createdAt } : {}),
-  };
+  return { totalPosts: page.totalElements };
 }
 
 export function escapeXml(value: string): string {
@@ -96,15 +91,14 @@ export function buildUrlSetXml(urls: readonly SitemapUrl[]): string {
   return `<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="/sitemap.xsl?v=2"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">${body}</urlset>`;
 }
 
-export function buildSitemapIndexXml(totalPosts: number, lastmod?: string): string {
-  const modified = lastmod ? `<lastmod>${escapeXml(lastmod)}</lastmod>` : "";
+export function buildSitemapIndexXml(totalPosts: number): string {
   const postSitemapCount = Math.max(1, Math.ceil(totalPosts / POST_URLS_PER_SITEMAP));
   const postPaths = Array.from({ length: postSitemapCount }, (_, index) =>
     index === 0 ? "/post-sitemap.xml" : `/post-sitemap${index + 1}.xml`,
   );
   const paths = [...postPaths, "/page-sitemap.xml", "/category-sitemap.xml"];
   const body = paths.map((path) =>
-    `<sitemap><loc>${escapeXml(absoluteUrl(path))}</loc>${modified}</sitemap>`,
+    `<sitemap><loc>${escapeXml(absoluteUrl(path))}</loc></sitemap>`,
   ).join("");
 
   return `<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="/sitemap.xsl?v=2"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${body}</sitemapindex>`;

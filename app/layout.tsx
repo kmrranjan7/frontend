@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { siteConfig } from "@/config/site";
 import "./globals.css";
+
+const GOOGLE_ANALYTICS_ID = "G-8GD0CKEJSC";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -83,7 +86,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang={siteConfig.language} suppressHydrationWarning data-scroll-behavior="smooth">
-      <body>{children}</body>
+      <body>
+        {children}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GOOGLE_ANALYTICS_ID}');
+          `}
+        </Script>
+      </body>
     </html>
   );
 }

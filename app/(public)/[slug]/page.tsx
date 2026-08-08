@@ -5,7 +5,8 @@ import { cache } from "react";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { env } from "@/config/env";
-import { articleJsonLd, faqJsonLd, type FaqItem } from "@/lib/seo/json-ld";
+import { fetchPostListings, type PostTypeSlug } from "@/lib/api/post-listings";
+import { articleJsonLd, faqJsonLd, jobPostingJsonLd, type FaqItem } from "@/lib/seo/json-ld";
 import { createMetadata } from "@/lib/seo/metadata";
 
 type PublicPost = Readonly<{
@@ -13,6 +14,7 @@ type PublicPost = Readonly<{
   title: string;
   slug: string;
   contentHtml: string;
+  applicationId?: string | null;
   department: string | null;
   stateName: string | null;
   postType: string;
@@ -22,10 +24,23 @@ type PublicPost = Readonly<{
   imageUrls?: string | null;
   organization?: string | null;
   qualification?: string | null;
+  vacancies?: number | null;
+  startDate?: string | null;
+  endDate?: string | null;
   faqSchemaJson?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
 }>;
+
+const INTERNAL_SECTION_LINKS = [
+  { href: "/jobs", label: "Latest Government Jobs" },
+  { href: "/results", label: "Sarkari Results" },
+  { href: "/admit-cards", label: "Admit Cards" },
+  { href: "/exams", label: "Exam Updates" },
+  { href: "/answer-keys", label: "Answer Keys" },
+  { href: "/syllabus", label: "Exam Syllabus" },
+  { href: "/admissions", label: "Admissions" },
+] as const;
 
 function plainText(html: string): string {
   return html
@@ -214,6 +229,34 @@ function categoryForPostType(postType: string): { name: string; path: string } {
   return categories[normalized] ?? { name: "Latest Updates", path: "/" };
 }
 
+function listingTypeForPost(postType: string): PostTypeSlug {
+  const normalized = postType.trim().toUpperCase().replace(/[\s-]+/g, "_");
+  const listingTypes: Record<string, PostTypeSlug> = {
+    JOB: "job",
+    RESULT: "result",
+    ADMIT: "admit",
+    EXAM: "exam",
+    ANSWER_KEY: "answer-key",
+    SYLLABUS: "syllabus",
+    ADMISSION: "admission",
+    OTHERS: "other",
+  };
+  return listingTypes[normalized] ?? "other";
+}
+
+async function relatedPosts(post: PublicPost) {
+  try {
+    const page = await fetchPostListings({
+      postType: listingTypeForPost(post.postType),
+      size: 7,
+      status: "PUBLISHED",
+    });
+    return page.content.filter((item) => item.slug !== post.slug).slice(0, 6);
+  } catch {
+    return [];
+  }
+}
+
 function longTailKeywords(post: PublicPost): string[] {
   const category = categoryForPostType(post.postType).name.toLowerCase();
   const organization = post.organization?.trim() || post.department?.trim();
@@ -246,6 +289,35 @@ function validDate(value?: string | null): string | undefined {
   if (!value) return undefined;
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+}
+
+function activeJobPostingJsonLd(post: PublicPost, publishedTime: string) {
+  const organization = post.organization?.trim() || post.department?.trim();
+  const region = post.stateName?.trim();
+  const validThrough = post.endDate?.trim();
+  const today = new Date().toISOString().slice(0, 10);
+
+  if (
+    post.postType.trim().toUpperCase() !== "JOB" ||
+    !organization ||
+    !region ||
+    !validThrough ||
+    validThrough < today
+  ) {
+    return null;
+  }
+
+  return jobPostingJsonLd({
+    title: post.title,
+    descriptionHtml: post.contentHtml,
+    identifier: post.applicationId?.trim() || post.id,
+    slug: post.slug,
+    datePosted: publishedTime,
+    validThrough,
+    organization,
+    region,
+    ...(post.vacancies ? { vacancies: post.vacancies } : {}),
+  });
 }
 
 function displayDate(value: string): string {
@@ -289,6 +361,7 @@ export default async function PublicPostPage({ params }: { params: Promise<{ slu
   const contentHtml = enhancePostHtml(post.contentHtml, post.title);
   const description = seoDescription(post);
   const category = categoryForPostType(post.postType);
+  const related = await relatedPosts(post);
   const publishedTime = validDate(post.createdAt) || validDate(post.updatedAt) || new Date().toISOString();
   const modifiedTime = validDate(post.updatedAt) || publishedTime;
   const author = post.organization?.trim() || post.department?.trim() || "Sarkari Global Result";
@@ -300,6 +373,7 @@ export default async function PublicPostPage({ params }: { params: Promise<{ slu
     ...(category.path === "/" ? [] : [category]),
     { name: post.title, path: `/${post.slug}` },
   ];
+  const jobPosting = activeJobPostingJsonLd(post, publishedTime);
 
   return (
     <div className="public-post-page min-h-[70vh] bg-[linear-gradient(180deg,#f8fbff_0%,#ffffff_28rem)] py-6">
@@ -323,6 +397,39 @@ export default async function PublicPostPage({ params }: { params: Promise<{ slu
           </header>
           <div className="public-post-content prose prose-slate mt-6 max-w-none text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: contentHtml }} />
         </article>
+        <aside className="mt-4 rounded-xl border border-indigo-100 bg-white p-4 shadow-sm" aria-labelledby="related-updates-heading">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
+            <h2 id="related-updates-heading" className="m-0 text-base font-extrabold text-slate-900">Related {category.name}</h2>
+            <Link href={category.path} className="text-xs font-bold text-indigo-700 hover:text-indigo-900 hover:underline">
+              View all {category.name}
+            </Link>
+          </div>
+          {related.length > 0 ? (
+            <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+              {related.map((item) => (
+                <li key={item.id}>
+                  <Link href={`/${encodeURIComponent(item.slug)}`} className="block rounded-lg border border-slate-100 bg-slate-50 px-3 py-2 text-sm font-semibold leading-snug text-slate-800 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-800">
+                    {item.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mb-0 mt-3 text-sm text-slate-600">Browse the category for more published updates.</p>
+          )}
+        </aside>
+        <nav className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3" aria-label="Explore more government updates">
+          <p className="m-0 text-xs font-extrabold uppercase tracking-wide text-slate-700">Explore more updates</p>
+          <ul className="mt-2 flex flex-wrap gap-1.5">
+            {INTERNAL_SECTION_LINKS.filter((item) => item.href !== category.path).map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className="inline-flex rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-800">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
       <JsonLd data={articleJsonLd({
         title: post.title,
@@ -334,6 +441,7 @@ export default async function PublicPostPage({ params }: { params: Promise<{ slu
         keywords,
         ...(image ? { image } : {}),
       })} />
+      {jobPosting && <JsonLd data={jobPosting} />}
       {faqs.length > 0 && <JsonLd data={faqJsonLd(faqs)} />}
     </div>
   );

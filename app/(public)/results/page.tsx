@@ -8,8 +8,8 @@ import { PublicPostListing } from "@/components/public/PublicPostListing";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 
 export const metadata: Metadata = createMetadata({
-  title: "Latest Government Exam Results",
-  description: "Find government exam results, scorecards, merit lists, and selection updates across India.",
+  title: "Latest Sarkari Result 2026 – Government Exam Results",
+  description: "Check the latest Sarkari Result 2026 updates, including government exam results, scorecards, merit lists, cutoff marks and selection lists across India.",
   path: "/results",
   keywords: [
     "latest government exam results online",

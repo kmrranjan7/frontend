@@ -148,6 +148,7 @@ export default function HomeJobsExplorer({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(jobs.length === JOBS_BATCH_SIZE);
   const [currentPage, setCurrentPage] = useState(0);
+  const [showClosingThisWeek, setShowClosingThisWeek] = useState(false);
   const [savedJobs, setSavedJobs] = useState<readonly PostListingItem[]>([]);
   const requestController = useRef<AbortController | null>(null);
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -163,7 +164,13 @@ export default function HomeJobsExplorer({
     () => renderedJobs.filter(({ deadline }) => deadline.closingThisWeek).length,
     [renderedJobs],
   );
-  const hasFilters = Boolean(searchValue || stateValue || qualificationValue);
+  const displayedJobs = useMemo(
+    () => showClosingThisWeek
+      ? renderedJobs.filter(({ deadline }) => deadline.closingThisWeek)
+      : renderedJobs,
+    [renderedJobs, showClosingThisWeek],
+  );
+  const hasFilters = Boolean(searchValue || stateValue || qualificationValue || showClosingThisWeek);
   const savedJobIds = useMemo(() => new Set(savedJobs.map((job) => job.id)), [savedJobs]);
 
   function updateSavedState(savedJobs: readonly PostListingItem[]) {
@@ -299,6 +306,7 @@ export default function HomeJobsExplorer({
     setSearchValue("");
     setStateValue("");
     setQualificationValue("");
+    setShowClosingThisWeek(false);
     setVisibleJobs(allJobs);
     setIsSearching(false);
   }
@@ -378,15 +386,20 @@ export default function HomeJobsExplorer({
             <div>
               <p className="m-0 text-[9px] font-black uppercase tracking-[0.14em] text-cyan-700">Latest Jobs</p>
               <h1 id="latest-jobs-heading" className="mt-0.5 text-[11px] font-extrabold tracking-tight text-indigo-950 sm:text-[12px]">
-                Latest Government Jobs, Results &amp; Admit Cards 2026
+                Latest Sarkari Result, Government Jobs &amp; Admit Cards 2026
               </h1>
               <p className="m-0 mt-0.5 text-[9px] leading-4 text-slate-600">Discover verified opportunities and apply with confidence.</p>
             </div>
           </div>
 
-          <Link href="/jobs" className="w-full max-w-full shrink-0 rounded-md border border-rose-600 bg-rose-600 px-2 py-1 text-center text-[9px] font-semibold leading-4 text-white transition-colors hover:bg-rose-700 sm:w-auto">
-            <span className="inline-flex items-center justify-center gap-1 text-white">Closing This Week: {closingThisWeek}<Icon name="chevron" size={12} /></span>
-          </Link>
+          <button
+            type="button"
+            aria-pressed={showClosingThisWeek}
+            onClick={() => setShowClosingThisWeek((current) => !current)}
+            className={`self-end shrink-0 rounded border px-1 py-0 text-center text-[7px] font-semibold leading-3.5 text-white transition-colors sm:self-auto ${showClosingThisWeek ? "border-indigo-700 bg-indigo-700 hover:bg-indigo-800" : "border-rose-600 bg-rose-600 hover:bg-rose-700"}`}
+          >
+            <span className="inline-flex items-center justify-center whitespace-nowrap text-white">{showClosingThisWeek ? "All Jobs" : `Closing: ${closingThisWeek}`}<Icon name="chevron" size={7} /></span>
+          </button>
         </div>
 
         <form action={basePath} onSubmit={submitSearch} className="mt-2 grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.2fr)_minmax(130px,0.55fr)_minmax(150px,0.6fr)_auto]">
@@ -455,7 +468,7 @@ export default function HomeJobsExplorer({
       <div className="mt-4 w-full min-w-0">
         <div className="overflow-visible pr-0 lg:max-h-[82vh] lg:overflow-y-auto lg:pr-1 lg:[scrollbar-gutter:stable] lg:[scrollbar-color:#0284c7_#e2e8f0]">
           <div className="grid min-w-0 grid-cols-1 gap-2 px-0 min-[560px]:grid-cols-2 lg:gap-2.5 xl:grid-cols-3">
-            {renderedJobs.map(({ job, deadline }) => {
+            {displayedJobs.map(({ job, deadline }) => {
               const isSaved = savedJobIds.has(job.id);
               return (
                 <article key={job.id} className="group relative flex min-w-0 flex-col rounded-lg border border-slate-200/90 bg-white p-2 shadow-sm transition-shadow hover:border-cyan-200 hover:shadow-md sm:rounded-md sm:p-1.5">
@@ -505,10 +518,10 @@ export default function HomeJobsExplorer({
               );
             })}
 
-            {visibleJobs.length === 0 ? (
+            {displayedJobs.length === 0 ? (
               <div className="col-span-full rounded-xl border border-dashed border-cyan-200 bg-cyan-50/40 px-4 py-8 text-center">
                 <p className="m-0 text-sm font-semibold text-slate-700">
-                  {isSearching ? "Searching published jobs..." : "No jobs found for selected filters"}
+                  {isSearching ? "Searching published jobs..." : showClosingThisWeek ? "No jobs are closing this week" : "No jobs found for selected filters"}
                 </p>
                 <p className="mt-1 text-xs text-slate-500">
                   {isSearching ? "Checking the latest records." : "Try clearing filters or changing search keywords."}

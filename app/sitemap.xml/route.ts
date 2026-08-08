@@ -2,8 +2,8 @@ import { buildSitemapIndexXml, fetchPublishedPostSummary, xmlResponse } from "@/
 
 export async function GET(): Promise<Response> {
   try {
-    const { totalPosts, lastmod } = await fetchPublishedPostSummary();
-    return xmlResponse(buildSitemapIndexXml(totalPosts, lastmod));
+    const { totalPosts } = await fetchPublishedPostSummary();
+    return xmlResponse(buildSitemapIndexXml(totalPosts));
   } catch {
     return xmlResponse(buildSitemapIndexXml(0));
   }

@@ -12,32 +12,35 @@ import {
 } from "@/lib/api/post-listings";
 import { createMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = createMetadata({
-  title: "Sarkari Global Result 2026: Latest Government Jobs, Online Forms, Admit Card & Results",
-  description:
-    "Get the latest Sarkari Global Result 2026 updates including Government Jobs, Online Forms, Admit Cards, Exam Results, Answer Keys, Syllabus, Admissions, Scholarships, Railway, SSC, UPSC, Banking, Police, Defence, PSU and State Government recruitment notifications.",
-  path: "/",
-  keywords: [
-  "Sarkari Global Result",
-   "Sarkari Result 2026",
-  "Government Jobs 2026",
-  "Latest Government Jobs",
-  "Online Form 2026",
-  "Admit Card",
-  "Exam Result",
-  "Answer Key",
-  "Syllabus",
-  "SSC Jobs",
-  "Railway Recruitment",
-  "Bank Jobs",
-  "UPSC Recruitment",
-  "Police Recruitment",
-  "Defence Jobs",
-  "PSU Recruitment",
-  "State Government Jobs",
-  "Free Job Alert",
-  ],
-});
+export const metadata: Metadata = {
+  ...createMetadata({
+    title: "Sarkari Global Result 2026: Sarkari Result, Jobs & Admit Cards",
+    description:
+      "Find the latest Sarkari Result 2026 updates on Sarkari Global Result, including government jobs, online forms, admit cards, exam results, answer keys, syllabus and admissions.",
+    path: "/",
+    keywords: [
+      "Sarkari Global Result",
+      "Sarkari Result 2026",
+      "Government Jobs 2026",
+      "Latest Government Jobs",
+      "Online Form 2026",
+      "Admit Card",
+      "Exam Result",
+      "Answer Key",
+      "Syllabus",
+      "SSC Jobs",
+      "Railway Recruitment",
+      "Bank Jobs",
+      "UPSC Recruitment",
+      "Police Recruitment",
+      "Defence Jobs",
+      "PSU Recruitment",
+      "State Government Jobs",
+      "Free Job Alert",
+    ],
+  }),
+  title: { absolute: "Sarkari Global Result 2026: Sarkari Result, Jobs & Admit Cards" },
+};
 
 async function loadPublishedPosts(postType?: PostTypeSlug, search = "", size = 10) {
   try {

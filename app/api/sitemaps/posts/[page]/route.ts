@@ -17,7 +17,9 @@ export async function GET(
 
   const urls = posts.map((post) => ({
     loc: absoluteUrl(`/${encodeURIComponent(post.slug)}`),
-    ...(post.createdAt ? { lastmod: post.createdAt } : {}),
+    ...(post.updatedAt
+      ? { lastmod: post.updatedAt }
+      : post.createdAt ? { lastmod: post.createdAt } : {}),
     ...(post.imageUrl ? { image: absoluteUrl(post.imageUrl) } : {}),
   }));
   return xmlResponse(buildUrlSetXml(urls));

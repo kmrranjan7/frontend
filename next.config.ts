@@ -5,6 +5,16 @@ const nextConfig: NextConfig = {
     qualities: [55, 75],
   },
   poweredByHeader: false,
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.sarkariglobalresult.com" }],
+        destination: "https://sarkariglobalresult.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {
