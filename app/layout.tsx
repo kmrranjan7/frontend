@@ -25,6 +25,9 @@ export const metadata: Metadata = {
     telephone: false,
   },
   manifest: siteConfig.manifest,
+  other: {
+    "google-adsense-account": "ca-pub-2913581002709381",
+  },
   alternates: { canonical: siteConfig.url },
   robots: {
     index: true,
